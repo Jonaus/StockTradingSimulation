@@ -1,0 +1,52 @@
+﻿@using StockTradingSimulationWebClientv2.Core
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Trading Simulation</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("Trading Simulation", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                @using (Html.BeginForm("ChangePort", "API"))
+                {
+                    <table class="navbar-header" style="position: absolute; right: 0" align="center">
+                        <tr>
+                            <td><input type="text" name="newPort" class="form-control" value=@ApiClient.Port /></td>
+                            <td><input type="submit" value="Set" class="btn btn-default" /></td>
+                        </tr>
+                    </table>
+                }
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                    <li>@Html.ActionLink("History", "History", "Home")</li>
+                    <li>@Html.ActionLink("Users", "Users", "Home")</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Jonas Ausevicius, IFF-4/2</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
