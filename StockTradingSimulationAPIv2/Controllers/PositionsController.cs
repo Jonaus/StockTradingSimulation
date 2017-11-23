@@ -8,6 +8,7 @@ using System.Web.Http.Description;
 using StockTradingSimulationAPI.Core;
 using StockTradingSimulationAPI.Helpers;
 using StockTradingSimulationAPI.Models;
+using StockTradingSimulationAPI.ViewModels;
 
 namespace StockTradingSimulationAPI.Controllers
 {
@@ -21,7 +22,7 @@ namespace StockTradingSimulationAPI.Controllers
             if (self == null)
                 return Unauthorized();
             
-            if (self.IsAdmin())
+            if (IsAdmin())
                 return Ok(await db.Positions.ToListAsync());
 
             return Ok(await db.Positions.Where(p => p.UserId == self.Id).ToListAsync());
@@ -36,7 +37,7 @@ namespace StockTradingSimulationAPI.Controllers
                 return Unauthorized();
 
             Position position = await db.Positions.FindAsync(id);
-            if (position == null || (!self.IsAdmin() && position.UserId != self.Id))
+            if (position == null || (!IsAdmin() && position.UserId != self.Id))
                 return NotFound();
 
             return Ok(position);
@@ -45,14 +46,16 @@ namespace StockTradingSimulationAPI.Controllers
         // PUT: api/Positions/5
         [ResponseType(typeof(void))]
         [Authorize(Roles = Roles.Admin)]
-        public async Task<IHttpActionResult> PutPosition(int id, Position position)
+        public async Task<IHttpActionResult> PutPosition(int id, PositionPutViewModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (id != position.Id)
-                return BadRequest();
+            Position position = await db.Positions.FindAsync(id);
+            if (position == null)
+                return NotFound();
 
+            model.AssignTo(position);
             db.Entry(position).State = EntityState.Modified;
 
             try
@@ -82,7 +85,7 @@ namespace StockTradingSimulationAPI.Controllers
             if (position == null)
                 return NotFound();
 
-            if (position.UserId != self.Id && !self.IsAdmin())
+            if (position.UserId != self.Id && !IsAdmin())
                 return Unauthorized();
 
             await position.Close();
@@ -104,7 +107,7 @@ namespace StockTradingSimulationAPI.Controllers
 
         // POST: api/Positions
         [ResponseType(typeof(Position))]
-        public async Task<IHttpActionResult> PostPosition(Position position)
+        public async Task<IHttpActionResult> PostPosition(PositionPostViewModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -113,7 +116,7 @@ namespace StockTradingSimulationAPI.Controllers
             if (self == null)
                 return Unauthorized();
 
-            Stock stock = await db.Stocks.FirstOrDefaultAsync(s => s.Id == position.StockId);
+            Stock stock = await db.Stocks.FirstOrDefaultAsync(s => s.Id == model.StockId);
             if (stock == null)
                 return NotFound();
 
@@ -121,10 +124,8 @@ namespace StockTradingSimulationAPI.Controllers
             if (stockPrice < 0)
                 return NotFound();
 
-            position.SetStartPrice(stockPrice);
-            position.SetOpenDatetime();
-            position.UserId = self.Id;
-
+            var position = model.Create(self.Id, stockPrice);
+            
             db.Positions.Add(position);
             await db.SaveChangesAsync();
 
@@ -140,7 +141,7 @@ namespace StockTradingSimulationAPI.Controllers
                 return Unauthorized();
 
             Position position = await db.Positions.FindAsync(id);
-            if (position == null || (!self.IsAdmin() && position.UserId != self.Id))
+            if (position == null || (!IsAdmin() && position.UserId != self.Id))
                 return NotFound();
 
             db.Positions.Remove(position);

@@ -24,21 +24,11 @@ namespace StockTradingSimulationAPI.Models
         public Transaction TransactionType { get; set; }
         [Required]
         public int Quantity { get; set; }
-        public float StartPrice { get; private set; }
-        public float? ClosePrice { get; private set; }
-        public DateTime OpenDatetime { get; private set; }
-        public DateTime? CloseDatetime { get; private set; }
+        public float StartPrice { get; set; }
+        public float? ClosePrice { get; set; }
+        public DateTime OpenDatetime { get; set; }
+        public DateTime? CloseDatetime { get; set; }
         public float? Stoploss { get; set; }
-
-        public void SetStartPrice(float price)
-        {
-            StartPrice = price;
-        }
-
-        public void SetOpenDatetime()
-        {
-            OpenDatetime = DateTime.Now;
-        }
 
         public async Task Close()
         {

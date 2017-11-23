@@ -8,6 +8,7 @@ using System.Web.Http.Description;
 using StockTradingSimulationAPI.Core;
 using StockTradingSimulationAPI.Helpers;
 using StockTradingSimulationAPI.Models;
+using StockTradingSimulationAPI.ViewModels;
 
 namespace StockTradingSimulationAPI.Controllers
 {
@@ -41,15 +42,15 @@ namespace StockTradingSimulationAPI.Controllers
             if (self == null)
                 return Unauthorized();
 
-            User user = await db.Users.FirstOrDefaultAsync(u => u.Id == id && u.Id == self.Id);
-            if (user == null)
+            User user = await db.Users.FirstOrDefaultAsync(u => u.Id == id);
+            if (user == null || (!IsAdmin() && user.Id != self.Id))
                 return NotFound();
 
             return Ok(user);
         }
 
-        // GET: api/Users/self/balance
-        [Route("self/balance")]
+        // GET: api/Users/self/Balance
+        [Route("self/Balance")]
         [ResponseType(typeof(float))]
         public async Task<IHttpActionResult> GetSelfBalance()
         {
@@ -60,8 +61,8 @@ namespace StockTradingSimulationAPI.Controllers
             return Ok(await CalculateBalance(self.Id));
         }
 
-        // GET: api/Users/5/balance
-        [Route("{id}/balance")]
+        // GET: api/Users/5/Balance
+        [Route("{id}/Balance")]
         [ResponseType(typeof(float))]
         public async Task<IHttpActionResult> GetUserBalance(string id)
         {
@@ -69,8 +70,8 @@ namespace StockTradingSimulationAPI.Controllers
             if (self == null)
                 return Unauthorized();
 
-            User user = await db.Users.FirstOrDefaultAsync(u => u.Id == id && u.Id == self.Id);
-            if (user == null)
+            User user = await db.Users.FirstOrDefaultAsync(u => u.Id == id);
+            if (user == null || (!IsAdmin() && user.Id != self.Id))
                 return NotFound();
 
             return Ok(await CalculateBalance(user.Id));
@@ -99,20 +100,52 @@ namespace StockTradingSimulationAPI.Controllers
             if (self == null)
                 return Unauthorized();
 
-            User user = await db.Users.FirstOrDefaultAsync(u => u.Id == id && u.Id == self.Id);
-            if (user == null)
+            User user = await db.Users.FirstOrDefaultAsync(u => u.Id == id);
+            if (user == null || (!IsAdmin() && user.Id != self.Id))
                 return NotFound();
 
-            var watchlist = await db.WatchedStocks.Where(s => s.UserId == self.Id).ToListAsync();
+            var watchlist = await db.WatchedStocks.Where(s => s.UserId == user.Id).ToListAsync();
 
             return Ok(watchlist);
         }
 
-        // POST: api/Users/5/balance
-        [Route("{id}/balance")]
-        [ResponseType(typeof(void))]
+        // GET: api/Users/self/History
+        [Route("self/History")]
+        [ResponseType(typeof(IEnumerable<MoneyHistory>))]
+        public async Task<IHttpActionResult> GetSelfHistory()
+        {
+            var self = await SelfUser();
+            if (self == null)
+                return Unauthorized();
+
+            var history = await db.MoneyHistory.Where(s => s.UserId == self.Id).ToListAsync();
+
+            return Ok(history);
+        }
+
+        // GET: api/Users/5/History
+        [Route("{id}/History")]
+        [ResponseType(typeof(IEnumerable<MoneyHistory>))]
+        public async Task<IHttpActionResult> GetUserHistory(string id)
+        {
+            var self = await SelfUser();
+            if (self == null)
+                return Unauthorized();
+
+            User user = await db.Users.FirstOrDefaultAsync(u => u.Id == id);
+            if (user == null || (!IsAdmin() && user.Id != self.Id))
+                return NotFound();
+
+            var history = await db.MoneyHistory.Where(s => s.UserId == user.Id).ToListAsync();
+
+            return Ok(history);
+        }
+
+        // POST: api/Users/5/Balance
+        [Route("{id}/Balance")]
+        [ResponseType(typeof(MoneyHistory))]
         [Authorize(Roles = Roles.Admin)]
-        public async Task<IHttpActionResult> PostBalance(string id, float amount)
+        public async Task<IHttpActionResult> PostBalance(string id, BalanceViewModel model)
         {
             var self = await SelfUser();
             if (self == null)
@@ -125,7 +158,7 @@ namespace StockTradingSimulationAPI.Controllers
             var entry = new MoneyHistory
             {
                 UserId = user.Id,
-                Amount = amount,
+                Amount = model.Amount,
                 Datetime = DateTime.Now
             };
             db.MoneyHistory.Add(entry);
@@ -157,8 +190,8 @@ namespace StockTradingSimulationAPI.Controllers
             if (self == null)
                 return Unauthorized();
             
-            User user = await db.Users.FirstOrDefaultAsync(u => u.Id == id && u.Id == self.Id);
-            if (user == null)
+            User user = await db.Users.FirstOrDefaultAsync(u => u.Id == id);
+            if (user == null || (!IsAdmin() && user.Id != self.Id))
                 return NotFound();
 
             db.Users.Remove(user);
@@ -279,11 +312,15 @@ namespace StockTradingSimulationAPI.Controllers
                 .AsEnumerable()
                 .Select(async p =>
                 {
-                    var cPrice = await p.Stock.GetCurrentPrice();
+                    float price = 0;
+                    if (p.CloseDatetime != null)
+                        price = await p.Stock.GetCurrentPrice();
+                    else
+                        price = p.StartPrice;
                     if (p.TransactionType == Transaction.BUY)
-                        return p.Quantity * cPrice;
+                        return p.Quantity * price;
                     if (p.TransactionType == Transaction.SELL_SHORT)
-                        return (p.StartPrice * 2 - cPrice) * 100;
+                        return (p.StartPrice * 2 - price) * 100;
                     throw new Exception("Unsupported transaction type.");
                 });
             var historySum = history.Any() ? history.Sum(h => h.Amount) : 0f;

@@ -20,6 +20,11 @@ namespace StockTradingSimulationAPI.Helpers
             return await db.Users.FirstOrDefaultAsync(u => u.UserName == name);
         }
 
+        protected bool IsAdmin()
+        {
+            return User.IsInRole(Roles.Admin);
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

@@ -8,6 +8,7 @@ using System.Web.Http.Description;
 using StockTradingSimulationAPI.Core;
 using StockTradingSimulationAPI.Helpers;
 using StockTradingSimulationAPI.Models;
+using StockTradingSimulationAPI.ViewModels;
 
 namespace StockTradingSimulationAPI.Controllers
 {
@@ -50,13 +51,16 @@ namespace StockTradingSimulationAPI.Controllers
         // PUT: api/Stocks/5
         [ResponseType(typeof(void))]
         [Authorize(Roles = Roles.Admin)]
-        public async Task<IHttpActionResult> PutStock(int id, Stock stock)
+        public async Task<IHttpActionResult> PutStock(int id, StockViewModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (id != stock.Id)
-                return BadRequest();
+            Stock stock = await db.Stocks.FindAsync(id);
+            if (stock == null)
+                return NotFound();
+
+            model.AssignTo(stock);
 
             db.Entry(stock).State = EntityState.Modified;
 

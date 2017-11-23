@@ -9,11 +9,6 @@ namespace StockTradingSimulationAPI.Models
     public class User : IdentityUser
     {
         public DateTime RegisterDatetime { get; } = DateTime.Now;
-
-        public bool IsAdmin()
-        {
-            return Roles.Any(r => r.RoleId == Core.Roles.Admin);
-        }
     }
     
     public class MoneyHistory
