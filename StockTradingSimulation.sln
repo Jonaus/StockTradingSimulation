@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockTradingSimulationAPI", "StockTradingSimulationAPIv2\StockTradingSimulationAPI.csproj", "{4CD97FB7-9379-46A8-A0B1-42513D7CDB18}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockTradingSimulationAPI", "StockTradingSimulationAPI\StockTradingSimulationAPI.csproj", "{4CD97FB7-9379-46A8-A0B1-42513D7CDB18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockTradingSimulationWebClientv2", "StockTradingSimulationWebClientv2\StockTradingSimulationWebClientv2.csproj", "{2E8CD364-F76F-40AB-BD0F-80973229B711}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockTradingSimulationWebClient", "StockTradingSimulationWebClient\StockTradingSimulationWebClient.csproj", "{2E8CD364-F76F-40AB-BD0F-80973229B711}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
