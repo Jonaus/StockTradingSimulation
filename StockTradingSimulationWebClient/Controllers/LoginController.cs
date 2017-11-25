@@ -19,9 +19,8 @@ namespace StockTradingSimulationWebClient.Controllers
         public ActionResult ProcessLogin(LoginModel model)
         {
             var client = ApiClient.Client;
-            var request = new RestRequest("oauth2/token", Method.POST);
+            var request = new RestRequest("api/account/login", Method.POST);
             request.AddObject(model);
-            request.AddParameter("grant_type", "password");
 
             IRestResponse<Token> response = client.Execute<Token>(request);
             if (!response.IsSuccessful)
