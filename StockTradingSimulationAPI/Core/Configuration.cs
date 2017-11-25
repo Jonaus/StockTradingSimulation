@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -46,7 +47,8 @@ namespace StockTradingSimulationAPI.Core
                 {
                     UserName = "administrator",
                     Email = "admin@local.com",
-                    EmailConfirmed = true
+                    EmailConfirmed = true,
+                    RegisterDatetime = DateTime.UtcNow
                 });
                 administrator.Roles.Add(new IdentityUserRole
                 {
@@ -57,7 +59,8 @@ namespace StockTradingSimulationAPI.Core
                 {
                     UserName = "suser",
                     Email = "user@local.com",
-                    EmailConfirmed = true
+                    EmailConfirmed = true,
+                    RegisterDatetime = DateTime.UtcNow
                 });
                 standardUser.Roles.Add(new IdentityUserRole
                 {

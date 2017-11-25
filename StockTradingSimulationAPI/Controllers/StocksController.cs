@@ -18,14 +18,14 @@ namespace StockTradingSimulationAPI.Controllers
         // GET: api/Stocks
         public IQueryable<Stock> GetStocks()
         {
-            return db.Stocks;
+            return Db.Stocks;
         }
 
         // GET: api/Stocks/5
         [ResponseType(typeof(Stock))]
         public async Task<IHttpActionResult> GetStock(int id)
         {
-            Stock stock = await db.Stocks.FindAsync(id);
+            Stock stock = await Db.Stocks.FindAsync(id);
             if (stock == null)
                 return NotFound();
 
@@ -37,7 +37,7 @@ namespace StockTradingSimulationAPI.Controllers
         [ResponseType(typeof(float))]
         public async Task<IHttpActionResult> GetStockPrice(int id)
         {
-            Stock stock = await db.Stocks.FindAsync(id);
+            Stock stock = await Db.Stocks.FindAsync(id);
             if (stock == null)
                 return NotFound();
 
@@ -56,17 +56,17 @@ namespace StockTradingSimulationAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            Stock stock = await db.Stocks.FindAsync(id);
+            Stock stock = await Db.Stocks.FindAsync(id);
             if (stock == null)
                 return NotFound();
 
             model.AssignTo(stock);
 
-            db.Entry(stock).State = EntityState.Modified;
+            Db.Entry(stock).State = EntityState.Modified;
 
             try
             {
-                await db.SaveChangesAsync();
+                await Db.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -86,19 +86,19 @@ namespace StockTradingSimulationAPI.Controllers
             if (self == null)
                 return Unauthorized();
 
-            Stock stock = await db.Stocks.FirstOrDefaultAsync(s => s.Id == id);
+            Stock stock = await Db.Stocks.FirstOrDefaultAsync(s => s.Id == id);
             if (stock == null)
                 return NotFound();
 
-            if (await db.WatchedStocks.AnyAsync(s => s.UserId == self.Id && s.StockId == stock.Id))
+            if (await Db.WatchedStocks.AnyAsync(s => s.UserId == self.Id && s.StockId == stock.Id))
                 return StatusCode(HttpStatusCode.NoContent);
             
-            db.WatchedStocks.Add(new WatchedStock
+            Db.WatchedStocks.Add(new WatchedStock
             {
                 StockId = stock.Id,
                 UserId = self.Id
             });
-            await db.SaveChangesAsync();
+            await Db.SaveChangesAsync();
             
             return StatusCode(HttpStatusCode.NoContent);
         }
@@ -111,16 +111,16 @@ namespace StockTradingSimulationAPI.Controllers
             if (self == null)
                 return Unauthorized();
 
-            Stock stock = await db.Stocks.FirstOrDefaultAsync(s => s.Id == id);
+            Stock stock = await Db.Stocks.FirstOrDefaultAsync(s => s.Id == id);
             if (stock == null)
                 return NotFound();
 
-            WatchedStock wStock = await db.WatchedStocks.FirstOrDefaultAsync(s => s.UserId == self.Id && s.StockId == stock.Id);
+            WatchedStock wStock = await Db.WatchedStocks.FirstOrDefaultAsync(s => s.UserId == self.Id && s.StockId == stock.Id);
             if (wStock == null)
                 return NotFound();
 
-            db.WatchedStocks.Remove(wStock);
-            await db.SaveChangesAsync();
+            Db.WatchedStocks.Remove(wStock);
+            await Db.SaveChangesAsync();
 
             return StatusCode(HttpStatusCode.NoContent);
         }
@@ -133,8 +133,8 @@ namespace StockTradingSimulationAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            db.Stocks.Add(stock);
-            await db.SaveChangesAsync();
+            Db.Stocks.Add(stock);
+            await Db.SaveChangesAsync();
 
             return CreatedAtRoute("DefaultApi", new { id = stock.Id }, stock);
         }
@@ -144,12 +144,12 @@ namespace StockTradingSimulationAPI.Controllers
         [Authorize(Roles = Roles.Admin)]
         public async Task<IHttpActionResult> DeleteStock(int id)
         {
-            Stock stock = await db.Stocks.FindAsync(id);
+            Stock stock = await Db.Stocks.FindAsync(id);
             if (stock == null)
                 return NotFound();
 
-            db.Stocks.Remove(stock);
-            await db.SaveChangesAsync();
+            Db.Stocks.Remove(stock);
+            await Db.SaveChangesAsync();
 
             return Ok(stock);
         }

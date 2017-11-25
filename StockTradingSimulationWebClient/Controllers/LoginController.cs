@@ -29,8 +29,10 @@ namespace StockTradingSimulationWebClient.Controllers
                 return RedirectToAction("Index", "Login", new { statusCode = response.StatusCode });
             }
 
-            HttpCookie tokenCookie = new HttpCookie("AccessToken", response.Data.access_token);
-            tokenCookie.Expires = DateTime.UtcNow.AddSeconds(response.Data.expires_in);
+            HttpCookie tokenCookie = new HttpCookie("AccessToken", response.Data.access_token)
+            {
+                Expires = DateTime.UtcNow.AddSeconds(response.Data.expires_in)
+            };
             Response.Cookies.Add(tokenCookie);
 
             return RedirectToAction("Index", "Home");

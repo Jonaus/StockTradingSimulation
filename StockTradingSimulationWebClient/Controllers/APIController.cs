@@ -3,13 +3,13 @@ using StockTradingSimulationWebClient.Core;
 
 namespace StockTradingSimulationWebClient.Controllers
 {
-    public class APIController : Controller
+    public class ApiController : Controller
     {
         [HttpPost]
         public ActionResult ChangePort(int newPort)
         {
-            ApiClient.ChangePort((int)newPort);
-            return Redirect(Request.UrlReferrer.ToString());
+            ApiClient.ChangePort(newPort);
+            return Redirect(Request.UrlReferrer?.ToString());
         }
     }
 }

@@ -18,9 +18,9 @@
                     <span class="icon-bar"></span>
                 </button>
                 @Html.ActionLink("Trading Simulation", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-                @using (Html.BeginForm("ChangePort", "API"))
+                @using (Html.BeginForm("ChangePort", "Api"))
                 {
-                    <table class="navbar-header" style="position: absolute; right: 0" align="center">
+                    <table class="navbar-header" style="position: absolute; right: 0">
                         <tr>
                             <td><input type="text" name="newPort" class="form-control" value=@ApiClient.Port /></td>
                             <td><input type="submit" value="Set" class="btn btn-default" /></td>

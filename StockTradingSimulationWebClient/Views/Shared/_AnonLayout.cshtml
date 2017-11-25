@@ -11,9 +11,9 @@
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="navbar-brand">Trading Simulation</div>
-        @using (Html.BeginForm("ChangePort", "API"))
+        @using (Html.BeginForm("ChangePort", "Api"))
         {
-            <table class="navbar-header" style="position: absolute; right: 0" align="center">
+            <table class="navbar-header" style="position: absolute; right: 0">
                 <tr>
                     <td><input type="text" name="newPort" class="form-control" value=@ApiClient.Port /></td>
                     <td><input type="submit" value="Set" class="btn btn-default" /></td>

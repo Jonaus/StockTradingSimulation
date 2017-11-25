@@ -11,9 +11,7 @@ namespace StockTradingSimulationWebClient.Controllers
             var self = ApiClient.GetSelf(token);
             var balance = ApiClient.GetSelfBalance(token);
 
-            if (self != null)
-                ViewBag.Username = self.UserName;
-            else ViewBag.Username = "null";
+            ViewBag.Username = self != null ? self.UserName : "null";
 
             ViewBag.Balance = balance;
 

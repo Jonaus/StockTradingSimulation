@@ -1,5 +1,8 @@
-﻿namespace StockTradingSimulationWebClient.Models
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace StockTradingSimulationWebClient.Models
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class Token
     {
         public string access_token { get; set; }

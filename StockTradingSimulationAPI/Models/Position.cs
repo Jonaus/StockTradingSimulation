@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace StockTradingSimulationAPI.Models
@@ -9,16 +10,16 @@ namespace StockTradingSimulationAPI.Models
     {
         [Key]
         [Required]
-        public int Id { get; private set; }
+        public int Id { get; protected set; }
         
         public string UserId { get; set; }
         [ForeignKey("UserId")]
-        public virtual User User { get; private set; }
+        public virtual User User { get; protected set; }
 
         [Required]
         public int StockId { get; set; }
         [ForeignKey("StockId")]
-        public virtual Stock Stock { get; private set; }
+        public virtual Stock Stock { get; protected set; }
 
         [Required]
         public Transaction TransactionType { get; set; }
@@ -32,11 +33,12 @@ namespace StockTradingSimulationAPI.Models
 
         public async Task Close()
         {
-            CloseDatetime = DateTime.Now;
+            CloseDatetime = DateTime.UtcNow;
             ClosePrice = await Stock.GetCurrentPrice();
         }
     }
-
+    
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum Transaction
     {
         BUY,

@@ -19,7 +19,7 @@ namespace StockTradingSimulationAPI.Controllers
         [Authorize(Roles = Roles.Admin)]
         public IQueryable<User> GetUsers()
         {
-            return db.Users;
+            return Db.Users;
         }
 
         // GET: api/Users/self
@@ -42,7 +42,7 @@ namespace StockTradingSimulationAPI.Controllers
             if (self == null)
                 return Unauthorized();
 
-            User user = await db.Users.FirstOrDefaultAsync(u => u.Id == id);
+            User user = await Db.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (user == null || (!IsAdmin() && user.Id != self.Id))
                 return NotFound();
 
@@ -70,7 +70,7 @@ namespace StockTradingSimulationAPI.Controllers
             if (self == null)
                 return Unauthorized();
 
-            User user = await db.Users.FirstOrDefaultAsync(u => u.Id == id);
+            User user = await Db.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (user == null || (!IsAdmin() && user.Id != self.Id))
                 return NotFound();
 
@@ -86,7 +86,7 @@ namespace StockTradingSimulationAPI.Controllers
             if (self == null)
                 return Unauthorized();
 
-            var watchlist = await db.WatchedStocks.Where(s => s.UserId == self.Id).ToListAsync();
+            var watchlist = await Db.WatchedStocks.Where(s => s.UserId == self.Id).ToListAsync();
 
             return Ok(watchlist);
         }
@@ -100,11 +100,11 @@ namespace StockTradingSimulationAPI.Controllers
             if (self == null)
                 return Unauthorized();
 
-            User user = await db.Users.FirstOrDefaultAsync(u => u.Id == id);
+            User user = await Db.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (user == null || (!IsAdmin() && user.Id != self.Id))
                 return NotFound();
 
-            var watchlist = await db.WatchedStocks.Where(s => s.UserId == user.Id).ToListAsync();
+            var watchlist = await Db.WatchedStocks.Where(s => s.UserId == user.Id).ToListAsync();
 
             return Ok(watchlist);
         }
@@ -118,7 +118,7 @@ namespace StockTradingSimulationAPI.Controllers
             if (self == null)
                 return Unauthorized();
 
-            var history = await db.MoneyHistory.Where(s => s.UserId == self.Id).ToListAsync();
+            var history = await Db.MoneyHistory.Where(s => s.UserId == self.Id).ToListAsync();
 
             return Ok(history);
         }
@@ -132,11 +132,11 @@ namespace StockTradingSimulationAPI.Controllers
             if (self == null)
                 return Unauthorized();
 
-            User user = await db.Users.FirstOrDefaultAsync(u => u.Id == id);
+            User user = await Db.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (user == null || (!IsAdmin() && user.Id != self.Id))
                 return NotFound();
 
-            var history = await db.MoneyHistory.Where(s => s.UserId == user.Id).ToListAsync();
+            var history = await Db.MoneyHistory.Where(s => s.UserId == user.Id).ToListAsync();
 
             return Ok(history);
         }
@@ -151,7 +151,7 @@ namespace StockTradingSimulationAPI.Controllers
             if (self == null)
                 return Unauthorized();
 
-            User user = await db.Users.FirstOrDefaultAsync(u => u.Id == id);
+            User user = await Db.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (user == null)
                 return NotFound();
 
@@ -159,10 +159,10 @@ namespace StockTradingSimulationAPI.Controllers
             {
                 UserId = user.Id,
                 Amount = model.Amount,
-                Datetime = DateTime.Now
+                Datetime = DateTime.UtcNow
             };
-            db.MoneyHistory.Add(entry);
-            await db.SaveChangesAsync();
+            Db.MoneyHistory.Add(entry);
+            await Db.SaveChangesAsync();
 
             return Ok(entry);
         }
@@ -176,8 +176,8 @@ namespace StockTradingSimulationAPI.Controllers
             if (self == null)
                 return Unauthorized();
 
-            db.Users.Remove(self);
-            await db.SaveChangesAsync();
+            Db.Users.Remove(self);
+            await Db.SaveChangesAsync();
 
             return Ok(self);
         }
@@ -190,12 +190,12 @@ namespace StockTradingSimulationAPI.Controllers
             if (self == null)
                 return Unauthorized();
             
-            User user = await db.Users.FirstOrDefaultAsync(u => u.Id == id);
+            User user = await Db.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (user == null || (!IsAdmin() && user.Id != self.Id))
                 return NotFound();
 
-            db.Users.Remove(user);
-            await db.SaveChangesAsync();
+            Db.Users.Remove(user);
+            await Db.SaveChangesAsync();
 
             return Ok(user);
         }
@@ -305,14 +305,14 @@ namespace StockTradingSimulationAPI.Controllers
 
         private async Task<float> CalculateBalance(string userId)
         {
-            var history = db.MoneyHistory
-                .Where(h => h.UserId == userId && h.Datetime <= DateTime.Now);
-            var positions = db.Positions
+            var history = Db.MoneyHistory
+                .Where(h => h.UserId == userId && h.Datetime <= DateTime.UtcNow);
+            var positions = Db.Positions
                 .Where(p => p.UserId == userId)
                 .AsEnumerable()
                 .Select(async p =>
                 {
-                    float price = 0;
+                    float price;
                     if (p.CloseDatetime != null)
                         price = await p.Stock.GetCurrentPrice();
                     else

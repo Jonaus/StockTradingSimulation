@@ -1,25 +1,24 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity.EntityFramework;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace StockTradingSimulationAPI.Models
 {
     public class User : IdentityUser
     {
-        public DateTime RegisterDatetime { get; } = DateTime.Now;
+        public DateTime RegisterDatetime { get; set; }
     }
     
     public class MoneyHistory
     {
         [Key]
         [Required]
-        public int Id { get; private set; }
+        public int Id { get; protected set; }
 
         public string UserId { get; set; }
         [ForeignKey("UserId")]
-        public virtual User User { get; private set; }
+        public virtual User User { get; protected set; }
 
         [Required]
         public float Amount { get; set; }

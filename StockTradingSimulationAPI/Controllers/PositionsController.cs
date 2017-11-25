@@ -23,9 +23,9 @@ namespace StockTradingSimulationAPI.Controllers
                 return Unauthorized();
             
             if (IsAdmin())
-                return Ok(await db.Positions.ToListAsync());
+                return Ok(await Db.Positions.ToListAsync());
 
-            return Ok(await db.Positions.Where(p => p.UserId == self.Id).ToListAsync());
+            return Ok(await Db.Positions.Where(p => p.UserId == self.Id).ToListAsync());
         }
 
         // GET: api/Positions/5
@@ -36,7 +36,7 @@ namespace StockTradingSimulationAPI.Controllers
             if (self == null)
                 return Unauthorized();
 
-            Position position = await db.Positions.FindAsync(id);
+            Position position = await Db.Positions.FindAsync(id);
             if (position == null || (!IsAdmin() && position.UserId != self.Id))
                 return NotFound();
 
@@ -51,16 +51,16 @@ namespace StockTradingSimulationAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            Position position = await db.Positions.FindAsync(id);
+            Position position = await Db.Positions.FindAsync(id);
             if (position == null)
                 return NotFound();
 
             model.AssignTo(position);
-            db.Entry(position).State = EntityState.Modified;
+            Db.Entry(position).State = EntityState.Modified;
 
             try
             {
-                await db.SaveChangesAsync();
+                await Db.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -81,7 +81,7 @@ namespace StockTradingSimulationAPI.Controllers
             if (self == null)
                 return Unauthorized();
 
-            Position position = await db.Positions.FirstOrDefaultAsync(p => p.Id == id && p.CloseDatetime == null);
+            Position position = await Db.Positions.FirstOrDefaultAsync(p => p.Id == id && p.CloseDatetime == null);
             if (position == null)
                 return NotFound();
 
@@ -89,11 +89,11 @@ namespace StockTradingSimulationAPI.Controllers
                 return Unauthorized();
 
             await position.Close();
-            db.Entry(position).State = EntityState.Modified;
+            Db.Entry(position).State = EntityState.Modified;
 
             try
             {
-                await db.SaveChangesAsync();
+                await Db.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -116,7 +116,7 @@ namespace StockTradingSimulationAPI.Controllers
             if (self == null)
                 return Unauthorized();
 
-            Stock stock = await db.Stocks.FirstOrDefaultAsync(s => s.Id == model.StockId);
+            Stock stock = await Db.Stocks.FirstOrDefaultAsync(s => s.Id == model.StockId);
             if (stock == null)
                 return NotFound();
 
@@ -126,8 +126,8 @@ namespace StockTradingSimulationAPI.Controllers
 
             var position = model.Create(self.Id, stockPrice);
             
-            db.Positions.Add(position);
-            await db.SaveChangesAsync();
+            Db.Positions.Add(position);
+            await Db.SaveChangesAsync();
 
             return CreatedAtRoute("DefaultApi", new { id = position.Id }, position);
         }
@@ -140,12 +140,12 @@ namespace StockTradingSimulationAPI.Controllers
             if (self == null)
                 return Unauthorized();
 
-            Position position = await db.Positions.FindAsync(id);
+            Position position = await Db.Positions.FindAsync(id);
             if (position == null || (!IsAdmin() && position.UserId != self.Id))
                 return NotFound();
 
-            db.Positions.Remove(position);
-            await db.SaveChangesAsync();
+            Db.Positions.Remove(position);
+            await Db.SaveChangesAsync();
 
             return Ok(position);
         }

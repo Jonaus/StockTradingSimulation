@@ -23,27 +23,28 @@ namespace StockTradingSimulationAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             
-            var user = db.Users.Add(new User
+            var user = Db.Users.Add(new User
             {
                 UserName = info.Username,
-                Email = info.Email
+                Email = info.Email,
+                RegisterDatetime = DateTime.UtcNow
             });
 
-            var userRole = await db.Roles.FirstOrDefaultAsync(r => r.Name == Roles.User);
+            var userRole = await Db.Roles.FirstOrDefaultAsync(r => r.Name == Roles.User);
             user.Roles.Add(new IdentityUserRole { RoleId = userRole.Id });
             await new MyUserStore().SetPasswordHashAsync(user, new MyUserManager().PasswordHasher.HashPassword(info.Password));
 
             try
             {
-                await db.SaveChangesAsync();
+                await Db.SaveChangesAsync();
                 var entry = new MoneyHistory
                 {
                     UserId = user.Id,
                     Amount = 10000,
-                    Datetime = DateTime.Now
+                    Datetime = DateTime.UtcNow
                 };
-                db.MoneyHistory.Add(entry);
-                await db.SaveChangesAsync();
+                Db.MoneyHistory.Add(entry);
+                await Db.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {

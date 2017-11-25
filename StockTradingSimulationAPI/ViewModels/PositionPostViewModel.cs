@@ -19,15 +19,16 @@ namespace StockTradingSimulationAPI.ViewModels
 
         public Position Create(string userId, float stockPrice)
         {
-            Position position = new Position();
-            position.UserId = userId;
-            position.StockId = StockId;
-            position.TransactionType = TransactionType;
-            position.Quantity = Quantity;
-            position.StartPrice = stockPrice;
-            position.OpenDatetime = DateTime.Now;
-            position.Stoploss = Stoploss;
-            return position;
+            return new Position
+            {
+                UserId = userId,
+                StockId = StockId,
+                TransactionType = TransactionType,
+                Quantity = Quantity,
+                StartPrice = stockPrice,
+                OpenDatetime = DateTime.UtcNow,
+                Stoploss = Stoploss
+            };
         }
     }
 }
