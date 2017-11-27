@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using StockTradingSimulationWebClient.Core;
+﻿using StockTradingSimulationWebClient.Core;
 
 namespace StockTradingSimulationWebClient.Models
 {
@@ -11,6 +10,7 @@ namespace StockTradingSimulationWebClient.Models
         public string StartPrice { get; set; }
         public string CurrentPrice { get; set; }
         public string Equity { get; set; }
+        public string Gains { get; set; }
         public string GainsPercent { get; set; }
 
         public PositionViewModel(Position position, string token)
@@ -22,6 +22,7 @@ namespace StockTradingSimulationWebClient.Models
             StartPrice = position.StartPrice.ToString("N");
             CurrentPrice = ApiClient.GetStockPrice(token, position.StockId).ToString("N");
             Equity = equity.ToString("N");
+            Gains = (equity - position.StartPrice * position.Quantity).ToString("+$0,0.00;-$0,0.00;+$0,0.00");
             GainsPercent =
                 ((equity / (position.StartPrice * position.Quantity) - 1) * 100).ToString("+0,0.00;-0,0.00;+0,0.00");
         }

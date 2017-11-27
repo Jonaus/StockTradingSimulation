@@ -38,6 +38,7 @@
         <th>Open</th>
         <th>Current</th>
         <th>Equity</th>
+        <th>Gains</th>
     </tr>
     </tbody>
     @foreach (var pos in Model)
@@ -48,7 +49,8 @@
             <td>@pos.TransactionType</td>
             <td>$@pos.StartPrice</td>
             <td>$@pos.CurrentPrice</td>
-            <td><b>$@pos.Equity (<span style="@(pos.GainsPercent[0] == '+' ? "color: green" : "color: red")">@pos.GainsPercent%</span>)</b></td>
+            <td><b>$@pos.Equity</b></td>
+            <td><b style="@(pos.GainsPercent[0] == '+' ? "color: green" : "color: red")">@pos.Gains (@pos.GainsPercent%)</b></td>
         </tr>
     }
 </table>
