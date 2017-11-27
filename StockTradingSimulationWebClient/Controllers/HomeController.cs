@@ -1,13 +1,15 @@
-﻿using System.Web.Mvc;
-using StockTradingSimulationWebClient.Core;
+﻿using StockTradingSimulationWebClient.Core;
+using System.Security.Claims;
+using System.Web.Mvc;
 
 namespace StockTradingSimulationWebClient.Controllers
 {
     public class HomeController : Controller
     {
+        [Authorize]
         public ActionResult Index()
         {
-            var token = Request.Cookies.Get("AccessToken")?.Value;
+            var token = ((ClaimsPrincipal) HttpContext.User).FindFirst("AccessToken").Value;
             var self = ApiClient.GetSelf(token);
             var balance = ApiClient.GetSelfBalance(token);
 
@@ -18,6 +20,7 @@ namespace StockTradingSimulationWebClient.Controllers
             return View();
         }
 
+        [Authorize]
         public ActionResult History()
         {
             ViewBag.Message = "Your application description page.";
@@ -25,6 +28,7 @@ namespace StockTradingSimulationWebClient.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Administrator")]
         public ActionResult Users()
         {
             ViewBag.Message = "Your contact page.";

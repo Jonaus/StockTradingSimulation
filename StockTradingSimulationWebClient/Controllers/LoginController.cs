@@ -1,9 +1,13 @@
-﻿using System;
-using System.Web.Mvc;
+﻿using Microsoft.Owin.Security;
 using RestSharp;
 using StockTradingSimulationWebClient.Core;
 using StockTradingSimulationWebClient.Models;
-using HttpCookie = System.Web.HttpCookie;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens;
+using System.Linq;
+using System.Security.Claims;
+using System.Web;
+using System.Web.Mvc;
 
 namespace StockTradingSimulationWebClient.Controllers
 {
@@ -28,11 +32,29 @@ namespace StockTradingSimulationWebClient.Controllers
                 return RedirectToAction("Index", "Login", new { statusCode = response.StatusCode });
             }
 
-            HttpCookie tokenCookie = new HttpCookie("AccessToken", response.Data.access_token)
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.ReadToken(response.Data.access_token) as JwtSecurityToken;
+            var roleClaims = token.Claims
+                .Where(c => c.Type == "role")
+                .Select(c => new Claim(ClaimTypes.Role, c.Value));
+
+            AuthenticationProperties options = new AuthenticationProperties
             {
-                Expires = DateTime.UtcNow.AddSeconds(response.Data.expires_in)
+                AllowRefresh = true,
+                IsPersistent = true,
+                ExpiresUtc = token.ValidTo
             };
-            Response.Cookies.Add(tokenCookie);
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, model.Username),
+                new Claim("AccessToken", token.RawData)
+            };
+            claims.AddRange(roleClaims);
+            
+            var identity = new ClaimsIdentity(claims, "ApplicationCookie");
+
+            Request.GetOwinContext().Authentication.SignIn(options, identity);
 
             return RedirectToAction("Index", "Home");
         }

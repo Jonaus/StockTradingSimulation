@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Web;
 using System.Web.Mvc;
 
 namespace StockTradingSimulationWebClient.Controllers
@@ -7,7 +7,7 @@ namespace StockTradingSimulationWebClient.Controllers
     {
         public ActionResult Index()
         {
-            Response.Cookies["AccessToken"].Expires = DateTime.UtcNow.AddDays(-1);
+            Request.GetOwinContext().Authentication.SignOut("ApplicationCookie");
 
             return RedirectToAction("Index", "Login");
         }
