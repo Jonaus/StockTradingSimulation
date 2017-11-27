@@ -313,10 +313,10 @@ namespace StockTradingSimulationAPI.Controllers
                 .Select(async p =>
                 {
                     float price;
-                    if (p.CloseDatetime != null)
+                    if (p.CloseDatetime == null)
                         price = await p.Stock.GetCurrentPrice();
                     else
-                        price = p.StartPrice;
+                        price = p.ClosePrice ?? await p.Stock.GetCurrentPrice();
                     if (p.TransactionType == Transaction.BUY)
                         return p.Quantity * price;
                     if (p.TransactionType == Transaction.SELL_SHORT)

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using RestSharp;
 using StockTradingSimulationWebClient.Models;
 
@@ -28,6 +30,24 @@ namespace StockTradingSimulationWebClient.Core
         public static float GetSelfBalance(string token)
         {
             var request = new RestRequest("api/Users/self/balance", Method.GET);
+            request.AddParameter("Authorization", $"Bearer {token}", ParameterType.HttpHeader);
+
+            IRestResponse<float> response = Client.Execute<float>(request);
+            return response.Data;
+        }
+
+        public static IEnumerable<Position> GetSelfPositions(string token)
+        {
+            var request = new RestRequest("api/positions", Method.GET);
+            request.AddParameter("Authorization", $"Bearer {token}", ParameterType.HttpHeader);
+
+            IRestResponse<List<Position>> response = Client.Execute<List<Position>>(request);
+            return response.Data;
+        }
+
+        public static float GetStockPrice(string token, int id)
+        {
+            var request = new RestRequest($"api/stocks/{id}/price", Method.GET);
             request.AddParameter("Authorization", $"Bearer {token}", ParameterType.HttpHeader);
 
             IRestResponse<float> response = Client.Execute<float>(request);

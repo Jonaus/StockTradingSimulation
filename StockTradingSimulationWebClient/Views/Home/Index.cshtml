@@ -1,9 +1,13 @@
-﻿@{
+﻿@model IEnumerable<StockTradingSimulationWebClient.Models.PositionViewModel>
+
+@{
     ViewBag.Title = "Home Page";
 }
 
-<h3>Welcome, @ViewBag.Username !</h3>
-<h4>Balance: $@ViewBag.Balance</h4>
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+<h3>Welcome, @User.Identity.Name!</h3>
+<h4>Balance: <b>$@ViewBag.Balance</b></h4>
 
 <!-- TradingView Widget BEGIN -->
 <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
@@ -24,3 +28,27 @@
     });
 </script>
 <!-- TradingView Widget END -->
+
+<table class="w3-table w3-bordered w3-striped w3-border test w3-hoverable">
+    <tbody>
+    <tr class="w3-green">
+        <th>Name</th>
+        <th>Qty.</th>
+        <th>Type</th>
+        <th>Open</th>
+        <th>Current</th>
+        <th>Equity</th>
+    </tr>
+    </tbody>
+    @foreach (var pos in Model)
+    {
+        <tr>
+            <td>@pos.Stock.Fullname (@pos.Stock.Ticker)</td>
+            <td>@pos.Quantity</td>
+            <td>@pos.TransactionType</td>
+            <td>$@pos.StartPrice</td>
+            <td>$@pos.CurrentPrice</td>
+            <td><b>$@pos.Equity (<span style="@(pos.GainsPercent[0] == '+' ? "color: green" : "color: red")">@pos.GainsPercent%</span>)</b></td>
+        </tr>
+    }
+</table>

@@ -1,6 +1,8 @@
-﻿using StockTradingSimulationWebClient.Core;
+﻿using System.Linq;
+using StockTradingSimulationWebClient.Core;
 using System.Security.Claims;
 using System.Web.Mvc;
+using StockTradingSimulationWebClient.Models;
 
 namespace StockTradingSimulationWebClient.Controllers
 {
@@ -10,14 +12,12 @@ namespace StockTradingSimulationWebClient.Controllers
         public ActionResult Index()
         {
             var token = ((ClaimsPrincipal) HttpContext.User).FindFirst("AccessToken").Value;
-            var self = ApiClient.GetSelf(token);
             var balance = ApiClient.GetSelfBalance(token);
+            var positions = ApiClient.GetSelfPositions(token).Select(p => new PositionViewModel(p, token));
+            
+            ViewBag.Balance = balance.ToString("N");
 
-            ViewBag.Username = self != null ? self.UserName : "null";
-
-            ViewBag.Balance = balance;
-
-            return View();
+            return View(positions);
         }
 
         [Authorize]
