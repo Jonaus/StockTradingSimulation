@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using RestSharp;
+﻿using RestSharp;
 using StockTradingSimulationWebClient.Models;
+using System;
+using System.Collections.Generic;
 
 namespace StockTradingSimulationWebClient.Core
 {
@@ -16,6 +15,15 @@ namespace StockTradingSimulationWebClient.Core
         {
             var builder = new UriBuilder(BaseUri) {Port = newPort};
             Client = new RestClient(builder.Uri);
+        }
+
+        public static IEnumerable<Stock> GetStocks(string token)
+        {
+            var request = new RestRequest("api/stocks", Method.GET);
+            request.AddParameter("Authorization", $"Bearer {token}", ParameterType.HttpHeader);
+
+            IRestResponse<List<Stock>> response = Client.Execute<List<Stock>>(request);
+            return response.Data;
         }
 
         public static User GetSelf(string token)
@@ -52,6 +60,29 @@ namespace StockTradingSimulationWebClient.Core
 
             IRestResponse<float> response = Client.Execute<float>(request);
             return response.Data;
+        }
+
+        public static void OpenPosition(string token, NewPositionViewModel model)
+        {
+            var request = new RestRequest($"api/positions", Method.POST);
+            request.AddParameter("Authorization", $"Bearer {token}", ParameterType.HttpHeader);
+            request.AddObject(new
+            {
+                StockId = model.SelectedStockId,
+                TransactionType = model.SelectedTransactionId,
+                Quantity = model.Quantity,
+                // Stoploss = 0
+            });
+
+            Client.Execute(request);
+        }
+
+        public static void ClosePosition(string token, int id)
+        {
+            var request = new RestRequest($"api/positions/{id}/close", Method.POST);
+            request.AddParameter("Authorization", $"Bearer {token}", ParameterType.HttpHeader);
+
+            Client.Execute(request);
         }
     }
 }

@@ -320,7 +320,7 @@ namespace StockTradingSimulationAPI.Controllers
                     if (p.TransactionType == Transaction.BUY)
                         return p.Quantity * price;
                     if (p.TransactionType == Transaction.SELL_SHORT)
-                        return (p.StartPrice * 2 - price) * 100;
+                        return p.Quantity * (2 * p.StartPrice - price);
                     throw new Exception("Unsupported transaction type.");
                 });
             var historySum = history.Any() ? history.Sum(h => h.Amount) : 0f;

@@ -1,0 +1,43 @@
+﻿@model IEnumerable<StockTradingSimulationWebClient.Models.PositionViewModel>
+
+<table class="w3-table w3-bordered w3-striped w3-border test w3-hoverable">
+    <tbody>
+        <tr class="w3-green">
+            <th>Name</th>
+            <th>Qty.</th>
+            <th>Type</th>
+            <th>Open</th>
+            <th>Current</th>
+            <th>Equity</th>
+            <th>Gains</th>
+            <th></th>
+        </tr>
+    </tbody>
+    @foreach (var pos in Model.Where(m => !m.Closed))
+    {
+        <tr>
+            <td>@pos.Stock.Fullname (@pos.Stock.Ticker)</td>
+            <td>@pos.Quantity</td>
+            <td>@pos.TransactionType</td>
+            <td>$@pos.StartPrice</td>
+            <td>$@pos.CurrentPrice</td>
+            <td><b>$@pos.Equity</b></td>
+            <td>
+                <div style="@(pos.GainsPercent[0] == '+' ? "color: green" : "color: red")">
+                    <b>@pos.Gains</b><br />
+                    <b style="font-size: 75%">(@pos.GainsPercent%)</b>
+                </div>
+            </td>
+            <td>
+                @using (Ajax.BeginForm("ClosePosition", "Home", null, new AjaxOptions
+                {
+                    OnSuccess = "closeSuccess()"
+                }))
+                {
+                    <input type="hidden" name="id" value="@pos.Id" />
+                    <button type="submit" value="CLOSE" class="btn btn-primary" style="color:white">CLOSE</button>
+                }
+            </td>
+        </tr>
+    }
+</table>

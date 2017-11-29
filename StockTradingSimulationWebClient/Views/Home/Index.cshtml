@@ -1,6 +1,4 @@
-﻿@model IEnumerable<StockTradingSimulationWebClient.Models.PositionViewModel>
-
-@{
+﻿@{
     ViewBag.Title = "Home Page";
 }
 
@@ -29,28 +27,58 @@
 </script>
 <!-- TradingView Widget END -->
 
-<table class="w3-table w3-bordered w3-striped w3-border test w3-hoverable">
-    <tbody>
-    <tr class="w3-green">
-        <th>Name</th>
-        <th>Qty.</th>
-        <th>Type</th>
-        <th>Open</th>
-        <th>Current</th>
-        <th>Equity</th>
-        <th>Gains</th>
-    </tr>
-    </tbody>
-    @foreach (var pos in Model)
-    {
-        <tr>
-            <td>@pos.Stock.Fullname (@pos.Stock.Ticker)</td>
-            <td>@pos.Quantity</td>
-            <td>@pos.TransactionType</td>
-            <td>$@pos.StartPrice</td>
-            <td>$@pos.CurrentPrice</td>
-            <td><b>$@pos.Equity</b></td>
-            <td><b style="@(pos.GainsPercent[0] == '+' ? "color: green" : "color: red")">@pos.Gains (@pos.GainsPercent%)</b></td>
-        </tr>
-    }
-</table>
+<h2 style="text-align: center">BUY</h2>
+
+@using (Ajax.BeginForm("OpenPosition", "Home", null, new AjaxOptions
+{
+    UpdateTargetId = "NewPositionPartial",
+    InsertionMode = InsertionMode.Replace,
+    OnSuccess = "buySuccess()"
+}))
+{
+    <div id="NewPositionPartial">
+        @{ Html.RenderAction("NewPositionPartial", "Home"); }
+    </div>
+}
+
+<h2 style="text-align: center">POSITIONS</h2>
+
+<div id="divLoading"></div>
+<div id="PositionsPartial"></div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/Scripts/jquery.unobtrusive-ajax.js")
+
+    <script>
+        function onBegin() {
+            $("#divLoading").html('<image src="../Content/ajax-loader.gif" alt="Loading, please wait" />');
+        }
+
+        function onComplete() {
+            $("#divLoading").html("");
+        }
+
+        function updatePositions() {
+            $("#PositionsPartial").load(
+                '@Url.Action("PositionsPartial", "Home")',
+                () => onComplete()
+            );
+        }
+
+        function buySuccess() {
+            alert('Successfully bough shares.');
+            updatePositions();
+        }
+
+        function closeSuccess() {
+            alert('Successfully closed position.');
+            updatePositions();
+        }
+
+        $(document).ready(function () {
+            onBegin();
+            updatePositions();
+        });
+    </script>
+}
