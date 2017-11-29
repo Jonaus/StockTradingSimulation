@@ -44,6 +44,15 @@ namespace StockTradingSimulationWebClient.Core
             return response.Data;
         }
 
+        public static float GetSelfRealBalance(string token)
+        {
+            var request = new RestRequest("api/Users/self/realbalance", Method.GET);
+            request.AddParameter("Authorization", $"Bearer {token}", ParameterType.HttpHeader);
+
+            IRestResponse<float> response = Client.Execute<float>(request);
+            return response.Data;
+        }
+
         public static IEnumerable<Position> GetSelfPositions(string token)
         {
             var request = new RestRequest("api/positions", Method.GET);

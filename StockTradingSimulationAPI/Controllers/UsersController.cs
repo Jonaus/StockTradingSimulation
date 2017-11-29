@@ -58,7 +58,7 @@ namespace StockTradingSimulationAPI.Controllers
             if (self == null)
                 return Unauthorized();
 
-            return Ok(await CalculateBalance(self.Id));
+            return Ok(await CalculateBalance(self.Id, false));
         }
 
         // GET: api/Users/5/Balance
@@ -74,7 +74,35 @@ namespace StockTradingSimulationAPI.Controllers
             if (user == null || (!IsAdmin() && user.Id != self.Id))
                 return NotFound();
 
-            return Ok(await CalculateBalance(user.Id));
+            return Ok(await CalculateBalance(user.Id, false));
+        }
+
+        // GET: api/Users/self/RealBalance
+        [Route("self/RealBalance")]
+        [ResponseType(typeof(float))]
+        public async Task<IHttpActionResult> GetSelfRealBalance()
+        {
+            var self = await SelfUser();
+            if (self == null)
+                return Unauthorized();
+
+            return Ok(await CalculateBalance(self.Id, true));
+        }
+
+        // GET: api/Users/5/RealBalance
+        [Route("{id}/RealBalance")]
+        [ResponseType(typeof(float))]
+        public async Task<IHttpActionResult> GetUserRealBalance(string id)
+        {
+            var self = await SelfUser();
+            if (self == null)
+                return Unauthorized();
+
+            User user = await Db.Users.FirstOrDefaultAsync(u => u.Id == id);
+            if (user == null || (!IsAdmin() && user.Id != self.Id))
+                return NotFound();
+
+            return Ok(await CalculateBalance(user.Id, true));
         }
 
         // GET: api/Users/self/Watchlist
@@ -303,7 +331,7 @@ namespace StockTradingSimulationAPI.Controllers
 
         #endregion
 
-        private async Task<float> CalculateBalance(string userId)
+        private async Task<float> CalculateBalance(string userId, bool realBalance)
         {
             var history = Db.MoneyHistory
                 .Where(h => h.UserId == userId && h.Datetime <= DateTime.UtcNow);
@@ -313,15 +341,18 @@ namespace StockTradingSimulationAPI.Controllers
                 .Select(async p =>
                 {
                     float price;
+                    float result;
                     if (p.CloseDatetime == null)
                         price = await p.Stock.GetCurrentPrice();
                     else
                         price = p.ClosePrice ?? await p.Stock.GetCurrentPrice();
                     if (p.TransactionType == Transaction.BUY)
-                        return p.Quantity * price;
-                    if (p.TransactionType == Transaction.SELL_SHORT)
-                        return p.Quantity * (2 * p.StartPrice - price);
-                    throw new Exception("Unsupported transaction type.");
+                        result = p.Quantity * price;
+                    else if (p.TransactionType == Transaction.SELL_SHORT)
+                        result = p.Quantity * (2 * p.StartPrice - price);
+                    else
+                        throw new Exception("Unsupported transaction type.");
+                    return realBalance && p.CloseDatetime == null ? -result : result - p.Quantity * p.StartPrice;
                 });
             var historySum = history.Any() ? history.Sum(h => h.Amount) : 0f;
             var positionsResults = await Task.WhenAll(positions);

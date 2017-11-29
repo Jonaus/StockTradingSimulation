@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
 <h3>Welcome, @User.Identity.Name!</h3>
-<h4>Balance: <b>$@ViewBag.Balance</b></h4>
+<h4>Balance: <b>$@ViewBag.Balance ($@ViewBag.RealBalance)</b></h4>
 
 <!-- TradingView Widget BEGIN -->
 <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
@@ -34,7 +34,7 @@
     UpdateTargetId = "NewPositionPartial",
     InsertionMode = InsertionMode.Replace,
     OnSuccess = "buySuccess()"
-}))
+}, new { Id = "NewPositionForm" }))
 {
     <div id="NewPositionPartial">
         @{ Html.RenderAction("NewPositionPartial", "Home"); }
@@ -64,6 +64,16 @@
                 '@Url.Action("PositionsPartial", "Home")',
                 () => onComplete()
             );
+        }
+
+        function updateEstimate() {
+            $.ajax({
+                url: '@Url.Action("GetPositionEstimate", "Home")',
+                data: $('#NewPositionForm').serialize(),
+                success: function (data) {
+                    $('#EstimateText').val("$" + data);
+                }
+            });
         }
 
         function buySuccess() {

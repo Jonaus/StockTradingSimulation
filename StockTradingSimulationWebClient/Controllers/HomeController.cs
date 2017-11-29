@@ -13,8 +13,10 @@ namespace StockTradingSimulationWebClient.Controllers
         {
             var token = ((ClaimsPrincipal) HttpContext.User).FindFirst("AccessToken").Value;
             var balance = ApiClient.GetSelfBalance(token);
+            var realbalance = ApiClient.GetSelfRealBalance(token);
             
             ViewBag.Balance = balance.ToString("N");
+            ViewBag.RealBalance = realbalance.ToString("N");
 
             return View();
         }
@@ -52,7 +54,7 @@ namespace StockTradingSimulationWebClient.Controllers
 
             return PartialView("PartialViews/NewPosition", model);
         }
-
+        
         public float GetPositionEstimate(NewPositionViewModel model)
         {
             var token = ((ClaimsPrincipal)HttpContext.User).FindFirst("AccessToken").Value;

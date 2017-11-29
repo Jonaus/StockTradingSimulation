@@ -8,7 +8,7 @@
     <div class="form-group">
         @Html.LabelFor(m => m.SelectedStockId, new {@class = "control-label col-md-2"})
         <div class="col-md-10">
-            @Html.DropDownListFor(m => m.SelectedStockId, Model.Stocks, new { @class = "form-control" } )
+            @Html.DropDownListFor(m => m.SelectedStockId, Model.Stocks, new { @class = "form-control", onchange = "updateEstimate()" } )
         </div>
     </div>
 
@@ -22,12 +22,16 @@
     <div class="form-group">
         @Html.LabelFor(model => model.Quantity, new {@class = "control-label col-md-2"})
         <div class="col-md-10">
-            @Html.EditorFor(model => model.Quantity, new { htmlAttributes = new { @class = "form-control", min = "0" } })
+            @Html.EditorFor(model => model.Quantity, new { htmlAttributes = new { @class = "form-control", onchange = "updateEstimate()", min = "0" } })
             @Html.ValidationMessageFor(model => model.Quantity, "", new { @class = "text-danger" })
         </div>
     </div>
         
     <div class="form-group">
+        <label class="control-label col-md-2">Estimate</label>
+        <div class="col-md-10">
+            <input disabled="disabled" class="form-control" id="EstimateText"/>
+        </div>
     </div>
 
     <div class="form-group">
