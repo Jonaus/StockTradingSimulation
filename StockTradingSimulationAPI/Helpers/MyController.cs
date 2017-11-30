@@ -66,6 +66,7 @@ namespace StockTradingSimulationAPI.Helpers
                 {
                     float price;
                     float result;
+                    var cost = p.Quantity * p.StartPrice;
                     if (p.CloseDatetime == null)
                         price = await p.Stock.GetCurrentPrice();
                     else
@@ -76,9 +77,7 @@ namespace StockTradingSimulationAPI.Helpers
                         result = p.Quantity * (2 * p.StartPrice - price);
                     else
                         throw new Exception("Unsupported transaction type.");
-                    if (realBalance)
-                        return p.CloseDatetime == null ? p.Quantity * p.StartPrice * -1 : p.Quantity * price;
-                    return p.CloseDatetime == null ? result - p.Quantity * p.StartPrice : result;
+                    return realBalance && p.CloseDatetime == null ? cost * -1 : result - cost;
                 });
             var historySum = history.Any() ? history.Sum(h => h.Amount) : 0f;
             var positionsResults = await Task.WhenAll(positions);
