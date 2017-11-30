@@ -11,13 +11,6 @@ namespace StockTradingSimulationWebClient.Controllers
         [Authorize]
         public ActionResult Index()
         {
-            var token = ((ClaimsPrincipal) HttpContext.User).FindFirst("AccessToken").Value;
-            var balance = ApiClient.GetSelfBalance(token);
-            var realbalance = ApiClient.GetSelfRealBalance(token);
-            
-            ViewBag.Balance = balance.ToString("N");
-            ViewBag.RealBalance = realbalance.ToString("N");
-
             return View();
         }
 
@@ -54,7 +47,19 @@ namespace StockTradingSimulationWebClient.Controllers
 
             return PartialView("PartialViews/NewPosition", model);
         }
-        
+
+        public string GetBalance()
+        {
+            var token = ((ClaimsPrincipal)HttpContext.User).FindFirst("AccessToken").Value;
+            return ApiClient.GetSelfBalance(token).ToString("N");
+        }
+
+        public string GetRealBalance()
+        {
+            var token = ((ClaimsPrincipal)HttpContext.User).FindFirst("AccessToken").Value;
+            return ApiClient.GetSelfRealBalance(token).ToString("N");
+        }
+
         public float GetPositionEstimate(NewPositionViewModel model)
         {
             var token = ((ClaimsPrincipal)HttpContext.User).FindFirst("AccessToken").Value;
@@ -64,9 +69,18 @@ namespace StockTradingSimulationWebClient.Controllers
         public ActionResult OpenPosition(NewPositionViewModel model)
         {
             var token = ((ClaimsPrincipal)HttpContext.User).FindFirst("AccessToken").Value;
+            var realBalance = ApiClient.GetSelfRealBalance(token);
+            var price = ApiClient.GetStockPrice(token, model.SelectedStockId) * model.Quantity;
+
+            if (price > realBalance)
+            {
+                ModelState.AddModelError("Estimate", "Not enough money.");
+                model.Success = false;
+            }
+
             ApiClient.OpenPosition(token, model);
             model.AddStocks(token);
-
+            
             return PartialView("PartialViews/NewPosition", model);
         }
 

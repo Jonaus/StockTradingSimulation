@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -52,6 +53,37 @@ namespace StockTradingSimulationAPI.Helpers
         protected bool PositionWithIdExists(int id)
         {
             return Db.Positions.Count(e => e.Id == id) > 0;
+        }
+
+        protected async Task<float> CalculateBalance(string userId, bool realBalance)
+        {
+            var history = Db.MoneyHistory
+                .Where(h => h.UserId == userId && h.Datetime <= DateTime.UtcNow);
+            var positions = Db.Positions
+                .Where(p => p.UserId == userId)
+                .AsEnumerable()
+                .Select(async p =>
+                {
+                    float price;
+                    float result;
+                    if (p.CloseDatetime == null)
+                        price = await p.Stock.GetCurrentPrice();
+                    else
+                        price = p.ClosePrice ?? await p.Stock.GetCurrentPrice();
+                    if (p.TransactionType == Transaction.BUY)
+                        result = p.Quantity * price;
+                    else if (p.TransactionType == Transaction.SELL_SHORT)
+                        result = p.Quantity * (2 * p.StartPrice - price);
+                    else
+                        throw new Exception("Unsupported transaction type.");
+                    if (realBalance)
+                        return p.CloseDatetime == null ? p.Quantity * p.StartPrice * -1 : p.Quantity * price;
+                    return p.CloseDatetime == null ? result - p.Quantity * p.StartPrice : result;
+                });
+            var historySum = history.Any() ? history.Sum(h => h.Amount) : 0f;
+            var positionsResults = await Task.WhenAll(positions);
+            var positionsSum = positionsResults.Any() ? positionsResults.Sum() : 0f;
+            return historySum + positionsSum;
         }
     }
 }

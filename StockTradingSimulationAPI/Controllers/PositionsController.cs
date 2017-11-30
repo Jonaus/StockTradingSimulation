@@ -115,7 +115,7 @@ namespace StockTradingSimulationAPI.Controllers
             var self = await SelfUser();
             if (self == null)
                 return Unauthorized();
-
+            
             Stock stock = await Db.Stocks.FirstOrDefaultAsync(s => s.Id == model.StockId);
             if (stock == null)
                 return NotFound();
@@ -123,6 +123,9 @@ namespace StockTradingSimulationAPI.Controllers
             var stockPrice = await stock.GetCurrentPrice();
             if (stockPrice < 0)
                 return NotFound();
+
+            if (stockPrice * model.Quantity > await CalculateBalance(self.Id, true))
+                return BadRequest("Not enough money.");
 
             var position = model.Create(self.Id, stockPrice);
             

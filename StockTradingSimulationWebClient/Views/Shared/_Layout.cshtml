@@ -18,18 +18,29 @@
                     <span class="icon-bar"></span>
                 </button>
                 @Html.ActionLink("Trading Simulation", "Index", "Home", new {area = ""}, new {@class = "navbar-brand"})
+                @if (Request.IsAuthenticated)
+                {
+                    <div class="navbar-brand pull-right" id="sm-view">@Html.Partial("_UserInfo")</div>
+                }
             </div>
             @if (Request.IsAuthenticated)
             {
                 <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="navbar-brand" id="lg-view">@Html.Partial("_UserInfo")</li>
+                    </ul>
                     <ul class="nav navbar-nav">
-                        <li>@Html.ActionLink("Home", "Index", "Home")</li>
                         <li>@Html.ActionLink("History", "History", "Home")</li>
                         @if (User.IsInRole("Administrator"))
                         {
                             <li>@Html.ActionLink("Users", "Users", "Home")</li>
                         }
-                        <li style="position: absolute; right: 10%">@Html.ActionLink("Logout", "Index", "Logout")</li>
+                        <li style="float: right">
+                            <a href="@Url.Action("Index", "Logout")">
+                                <span class="glyphicon glyphicon-log-out"></span>
+                                Logout
+                            </a>
+                        </li>
                     </ul>
                 </div>
             }
@@ -51,9 +62,30 @@
             }
         </footer>
     </div>
-
+    
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+    
+<script>
+    (function updateBalance() {
+        if ('@Request.IsAuthenticated' === 'True') {
+            $.ajax({
+                url: "@Url.Action("GetBalance", "Home")",
+                success: function(data) {
+                    $('[id="balance-text"').each((i, ob) => $(ob).html(data));
+                }
+            });
+
+            $.ajax({
+                url: "@Url.Action("GetRealBalance", "Home")",
+                success: function (data) {
+                    $('[id="real-balance-text"').each((i, ob) => $(ob).html(data));
+                }
+            });
+        }
+        setTimeout(updateBalance, 10000);
+    })();
+</script>
 </body>
 </html>

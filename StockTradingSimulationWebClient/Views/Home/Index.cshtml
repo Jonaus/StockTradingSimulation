@@ -4,9 +4,6 @@
 
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
-<h3>Welcome, @User.Identity.Name!</h3>
-<h4>Balance: <b>$@ViewBag.Balance ($@ViewBag.RealBalance)</b></h4>
-
 <!-- TradingView Widget BEGIN -->
 <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
 <script type="text/javascript">
@@ -33,7 +30,7 @@
 {
     UpdateTargetId = "NewPositionPartial",
     InsertionMode = InsertionMode.Replace,
-    OnSuccess = "buySuccess()"
+    OnSuccess = "buySuccess(data)"
 }, new { Id = "NewPositionForm" }))
 {
     <div id="NewPositionPartial">
@@ -76,7 +73,8 @@
             });
         }
 
-        function buySuccess() {
+        function buySuccess(data) {
+            if (data.indexOf("field-validation-error") > -1) return;
             alert('Successfully bough shares.');
             updatePositions();
         }

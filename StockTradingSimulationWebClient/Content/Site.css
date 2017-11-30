@@ -22,3 +22,14 @@ select,
 textarea {
     max-width: 280px;
 }
+
+@media(min-width:768px){
+    #sm-view {
+        display:none;
+    }
+}
+@media(max-width:767px) {
+    #lg-view {
+         display: none;
+    }
+}

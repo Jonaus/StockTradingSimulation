@@ -28,9 +28,10 @@
     </div>
         
     <div class="form-group">
-        <label class="control-label col-md-2">Estimate</label>
+        @Html.LabelFor(model => model.Estimate, new { @class = "control-label col-md-2" })
         <div class="col-md-10">
             <input disabled="disabled" class="form-control" id="EstimateText"/>
+            @Html.ValidationMessageFor(model => model.Estimate, "", new { @class = "text-danger" })
         </div>
     </div>
 

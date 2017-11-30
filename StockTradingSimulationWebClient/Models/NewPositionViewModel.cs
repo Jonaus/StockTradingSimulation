@@ -20,6 +20,11 @@ namespace StockTradingSimulationWebClient.Models
         [Display(Name = "Quantity")]
         public int Quantity { get; set; }
 
+        [Display(Name = "Estimate")]
+        public float Estimate { get; set; }
+
+        public bool Success { get; set; } = true;
+
         public IEnumerable<SelectListItem> Stocks { get; private set; }
         public IEnumerable<SelectListItem> TransactionTypes { get; }
 

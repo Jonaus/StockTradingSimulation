@@ -1025,6 +1025,7 @@
     <Content Include="Views\Register\Index.cshtml" />
     <Content Include="Views\Home\PartialViews\Positions.cshtml" />
     <Content Include="Views\Home\PartialViews\NewPosition.cshtml" />
+    <Content Include="Views\Shared\_UserInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
