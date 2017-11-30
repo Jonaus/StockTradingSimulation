@@ -1,7 +1,51 @@
 ﻿@{
-    ViewBag.Title = "About";
+    ViewBag.Title = "History";
 }
-<h2>@ViewBag.Title.</h2>
-<h3>@ViewBag.Message</h3>
 
-<p>Use this area to provide additional information.</p>
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+<h2 style="text-align: center">TRANSACTIONS</h2>
+
+<div id="divLoadingTrans"></div>
+<div id="TransactionsPartial"></div>
+
+<h2 style="text-align: center">CLOSED POSITIONS</h2>
+
+<div id="divLoadingPos"></div>
+<div id="PositionsPartial"></div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/Scripts/jquery.unobtrusive-ajax.js")
+
+    <script>
+        function onBegin(id) {
+            $(id).html('<image src="../Content/ajax-loader.gif" alt="Loading, please wait" />');
+        }
+
+        function onComplete(id) {
+            $(id).html("");
+        }
+
+        function updatePositions() {
+            onBegin("#divLoadingPos");
+            $("#PositionsPartial").load(
+                '@Url.Action("PositionsPartial", "Home", new { closed = true })',
+                () => onComplete("#divLoadingPos")
+            );
+        }
+
+        function updateTransactions() {
+            onBegin("#divLoadingTrans");
+            $("#TransactionsPartial").load(
+                '@Url.Action("TransactionsPartial", "Home")',
+                () => onComplete("#divLoadingTrans")
+            );
+        }
+
+        $(document).ready(function () {
+            updateTransactions();
+            updatePositions();
+        });
+    </script>
+}

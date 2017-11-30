@@ -26,6 +26,15 @@ namespace StockTradingSimulationWebClient.Core
             return response.Data;
         }
 
+        public static IEnumerable<MoneyHistory> GetHistory(string token)
+        {
+            var request = new RestRequest("api/users/self/history", Method.GET);
+            request.AddParameter("Authorization", $"Bearer {token}", ParameterType.HttpHeader);
+
+            IRestResponse<List<MoneyHistory>> response = Client.Execute<List<MoneyHistory>>(request);
+            return response.Data;
+        }
+
         public static User GetSelf(string token)
         {
             var request = new RestRequest("api/Users/self", Method.GET);

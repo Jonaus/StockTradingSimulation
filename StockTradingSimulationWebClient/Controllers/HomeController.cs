@@ -30,13 +30,22 @@ namespace StockTradingSimulationWebClient.Controllers
             return View();
         }
 
-        public ActionResult PositionsPartial()
+        public ActionResult PositionsPartial(bool closed = false)
         {
             var token = ((ClaimsPrincipal)HttpContext.User).FindFirst("AccessToken").Value;
             var stockPrices = Helpers.GetStockPrices(token);
             var positions = ApiClient.GetSelfPositions(token).Select(p => new PositionViewModel(p, stockPrices));
 
+            ViewBag.Closed = closed;
             return PartialView("PartialViews/Positions", positions);
+        }
+
+        public ActionResult TransactionsPartial()
+        {
+            var token = ((ClaimsPrincipal)HttpContext.User).FindFirst("AccessToken").Value;
+            var transactions = ApiClient.GetHistory(token);
+
+            return PartialView("PartialViews/Transactions", transactions);
         }
 
         public ActionResult NewPositionPartial()

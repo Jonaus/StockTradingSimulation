@@ -13,7 +13,7 @@ namespace StockTradingSimulationWebClient.Core
             if (position.CloseDatetime <= position.OpenDatetime)
                 price = cPrice;
             else
-                price = position.StartPrice;
+                price = position.ClosePrice;
             if (position.TransactionType == Transaction.BUY)
                 return position.Quantity * price;
             if (position.TransactionType == Transaction.SELL_SHORT)

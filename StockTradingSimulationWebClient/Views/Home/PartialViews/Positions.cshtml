@@ -7,20 +7,20 @@
             <th>Qty.</th>
             <th>Type</th>
             <th>Open</th>
-            <th>Current</th>
+            <th>@(ViewBag.Closed ? "Close" : "Current")</th>
             <th>Equity</th>
             <th>Gains</th>
             <th></th>
         </tr>
     </tbody>
-    @foreach (var pos in Model.Where(m => !m.Closed))
+    @foreach (var pos in Model.Where(m => m.Closed == ViewBag.Closed))
     {
         <tr>
             <td>@pos.Stock.Fullname (@pos.Stock.Ticker)</td>
             <td>@pos.Quantity</td>
             <td>@pos.TransactionType</td>
             <td>$@pos.StartPrice</td>
-            <td>$@pos.CurrentPrice</td>
+            <td>$@(ViewBag.Closed ? pos.ClosedPrice : pos.CurrentPrice)</td>
             <td><b>$@pos.Equity</b></td>
             <td>
                 <div style="@(pos.GainsPercent[0] == '+' ? "color: green" : "color: red")">
@@ -28,16 +28,23 @@
                     <b style="font-size: 75%">(@pos.GainsPercent%)</b>
                 </div>
             </td>
-            <td>
-                @using (Ajax.BeginForm("ClosePosition", "Home", null, new AjaxOptions
-                {
-                    OnSuccess = "closeSuccess()"
-                }))
-                {
-                    <input type="hidden" name="id" value="@pos.Id" />
-                    <button type="submit" value="CLOSE" class="btn btn-primary" style="color:white">CLOSE</button>
-                }
-            </td>
+            @if (ViewBag.Closed == false)
+            {
+                <td>
+                    @using (Ajax.BeginForm("ClosePosition", "Home", null, new AjaxOptions
+                    {
+                        OnSuccess = "closeSuccess()"
+                    }))
+                    {
+                        <input type="hidden" name="id" value="@pos.Id"/>
+                        <button type="submit" value="CLOSE" class="btn btn-primary" style="color: white">CLOSE</button>
+                    }
+                </td>
+            }
+            else
+            {
+                <td>@pos.ClosedDatetime</td>
+            }
         </tr>
     }
 </table>

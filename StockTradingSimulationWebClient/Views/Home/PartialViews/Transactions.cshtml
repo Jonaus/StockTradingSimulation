@@ -1,0 +1,17 @@
+﻿@model IEnumerable<StockTradingSimulationWebClient.Models.MoneyHistory>
+
+<table class="w3-table w3-bordered w3-striped w3-border test w3-hoverable">
+    <tbody>
+    <tr class="w3-green">
+        <th>Amount</th>
+        <th>Datetime</th>
+    </tr>
+    </tbody>
+    @foreach (var pos in Model)
+    {
+        <tr>
+            <td>@pos.Amount</td>
+            <td>@pos.Datetime</td>
+        </tr>
+    }
+</table>

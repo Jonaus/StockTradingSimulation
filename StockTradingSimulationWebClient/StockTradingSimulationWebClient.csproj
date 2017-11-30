@@ -198,6 +198,7 @@
     <Compile Include="Models\StockPrice.cs" />
     <Compile Include="Models\NewPositionViewModel.cs" />
     <Compile Include="Models\Token.cs" />
+    <Compile Include="Models\MoneyHistory.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -1026,6 +1027,7 @@
     <Content Include="Views\Home\PartialViews\Positions.cshtml" />
     <Content Include="Views\Home\PartialViews\NewPosition.cshtml" />
     <Content Include="Views\Shared\_UserInfo.cshtml" />
+    <Content Include="Views\Home\PartialViews\Transactions.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
