@@ -16,7 +16,7 @@ namespace StockTradingSimulationWebClient.Models
         public int SelectedTransactionId { get; set; }
 
         [Required]
-        [Range(0, int.MaxValue, ErrorMessage = "Value cannot be negative !")]
+        [Range(1, int.MaxValue, ErrorMessage = "Value must be higher than 0!")]
         [Display(Name = "Quantity")]
         public int Quantity { get; set; }
 

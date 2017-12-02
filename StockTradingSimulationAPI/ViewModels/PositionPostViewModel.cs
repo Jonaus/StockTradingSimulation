@@ -13,7 +13,7 @@ namespace StockTradingSimulationAPI.ViewModels
         public Transaction TransactionType { get; set; }
 
         [Required]
-        [Range(0, int.MaxValue, ErrorMessage = "Value cannot be negative !")]
+        [Range(1, int.MaxValue, ErrorMessage = "Value must be higher than 0!")]
         public int Quantity { get; set; }
 
         public float? Stoploss { get; set; }

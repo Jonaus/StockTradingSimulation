@@ -55,13 +55,17 @@
                         <table>
                             <tr>
                                 <td>
-                                    <input type="hidden" name="id" value="@stock.Id" />
+                                    <input type="hidden" name="id" value="@stock.Id"/>
                                     <button type="submit" value="DELETE" class="btn btn-danger" style="color: white">DELETE</button>
                                 </td>
                             </tr>
                         </table>
                     }
                 </td>
+            }
+            else
+            {
+                <td class="col-md-2"></td>
             }
         </tr>
     }
