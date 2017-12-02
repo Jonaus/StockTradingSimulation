@@ -2,6 +2,7 @@
 using StockTradingSimulationWebClient.Models;
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace StockTradingSimulationWebClient.Core
 {
@@ -19,88 +20,98 @@ namespace StockTradingSimulationWebClient.Core
 
         public static IEnumerable<Stock> GetStocks(string token)
         {
-            var request = new RestRequest("api/stocks", Method.GET);
-            request.AddParameter("Authorization", $"Bearer {token}", ParameterType.HttpHeader);
-
-            IRestResponse<List<Stock>> response = Client.Execute<List<Stock>>(request);
-            return response.Data;
+            return Get<List<Stock>>(token, "api/stocks");
         }
 
         public static IEnumerable<MoneyHistory> GetHistory(string token)
         {
-            var request = new RestRequest("api/users/self/history", Method.GET);
-            request.AddParameter("Authorization", $"Bearer {token}", ParameterType.HttpHeader);
-
-            IRestResponse<List<MoneyHistory>> response = Client.Execute<List<MoneyHistory>>(request);
-            return response.Data;
+            return Get<List<MoneyHistory>>(token, "api/users/self/history");
         }
 
         public static User GetSelf(string token)
         {
-            var request = new RestRequest("api/Users/self", Method.GET);
-            request.AddParameter("Authorization", $"Bearer {token}", ParameterType.HttpHeader);
-
-            IRestResponse<User> response = Client.Execute<User>(request);
-            return response.Data;
+            return Get<User>(token, "api/Users/self");
         }
 
         public static float GetSelfBalance(string token)
         {
-            var request = new RestRequest("api/Users/self/balance", Method.GET);
-            request.AddParameter("Authorization", $"Bearer {token}", ParameterType.HttpHeader);
-
-            IRestResponse<float> response = Client.Execute<float>(request);
-            return response.Data;
+            return Get<float>(token, "api/Users/self/balance");
         }
 
         public static float GetSelfRealBalance(string token)
         {
-            var request = new RestRequest("api/Users/self/realbalance", Method.GET);
-            request.AddParameter("Authorization", $"Bearer {token}", ParameterType.HttpHeader);
-
-            IRestResponse<float> response = Client.Execute<float>(request);
-            return response.Data;
+            return Get<float>(token, "api/Users/self/realbalance");
         }
 
         public static IEnumerable<Position> GetSelfPositions(string token)
         {
-            var request = new RestRequest("api/positions", Method.GET);
-            request.AddParameter("Authorization", $"Bearer {token}", ParameterType.HttpHeader);
-
-            IRestResponse<List<Position>> response = Client.Execute<List<Position>>(request);
-            return response.Data;
+            return Get<List<Position>>(token, "api/positions");
         }
 
         public static float GetStockPrice(string token, int id)
         {
-            var request = new RestRequest($"api/stocks/{id}/price", Method.GET);
-            request.AddParameter("Authorization", $"Bearer {token}", ParameterType.HttpHeader);
-
-            IRestResponse<float> response = Client.Execute<float>(request);
-            return response.Data;
+            return Get<float>(token, $"api/stocks/{id}/price");
         }
 
         public static void OpenPosition(string token, NewPositionViewModel model)
         {
-            var request = new RestRequest($"api/positions", Method.POST);
-            request.AddParameter("Authorization", $"Bearer {token}", ParameterType.HttpHeader);
-            request.AddObject(new
+            Post<string>(token, $"api/positions", new
             {
                 StockId = model.SelectedStockId,
                 TransactionType = model.SelectedTransactionId,
                 Quantity = model.Quantity,
                 // Stoploss = 0
             });
-
-            Client.Execute(request);
         }
 
         public static void ClosePosition(string token, int id)
         {
-            var request = new RestRequest($"api/positions/{id}/close", Method.POST);
-            request.AddParameter("Authorization", $"Bearer {token}", ParameterType.HttpHeader);
-
-            Client.Execute(request);
+            Post<string>(token, $"api/positions/{id}/close");
         }
+
+        #region Private
+
+        private static T Get<T>(string token, string endpoint)
+        {
+            return Execute<T>(token, endpoint, Method.GET);
+        }
+
+        private static T Post<T>(string token, string endpoint, object o = null)
+        {
+            return Execute<T>(token, endpoint, Method.POST, o);
+        }
+
+        private static T Put<T>(string token, string endpoint, object o = null)
+        {
+            return Execute<T>(token, endpoint, Method.PUT, o);
+        }
+
+        private static T Delete<T>(string token, string endpoint)
+        {
+            return Execute<T>(token, endpoint, Method.DELETE);
+        }
+
+        private static T Execute<T>(string token, string endpoint, Method method, object o = null)
+        {
+            var request = new RestRequest(endpoint, method);
+            request.AddParameter("Authorization", $"Bearer {token}", ParameterType.HttpHeader);
+            if (o != null) request.AddObject(o);
+
+            IRestResponse response = Client.Execute(request);
+            try
+            {
+                return JsonConvert.DeserializeObject<T>(response.Content, new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Ignore,
+                    MissingMemberHandling = MissingMemberHandling.Ignore
+                });
+            }
+            catch
+            {
+                return default(T);
+            }
+        }
+
+        #endregion
     }
 }
