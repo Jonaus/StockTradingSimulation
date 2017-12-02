@@ -44,6 +44,8 @@ namespace StockTradingSimulationWebClient.Controllers
             var self = ApiClient.GetSelf(token);
             var positions = ApiClient.GetSelfPositions(token)
                 .Where(p => p.UserId == self.Id)
+                .OrderByDescending(p => p.CloseDatetime)
+                .ThenByDescending(p => p.OpenDatetime)
                 .Select(p => new PositionViewModel(p, stockPrices));
 
             ViewBag.Closed = closed;
@@ -54,7 +56,8 @@ namespace StockTradingSimulationWebClient.Controllers
         public ActionResult TransactionsPartial()
         {
             var token = ((ClaimsPrincipal)HttpContext.User).FindFirst("AccessToken").Value;
-            var transactions = ApiClient.GetHistory(token);
+            var transactions = ApiClient.GetHistory(token)
+                .OrderByDescending(t => t.Datetime);
 
             return PartialView("PartialViews/Transactions", transactions);
         }

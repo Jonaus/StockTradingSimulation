@@ -50,6 +50,21 @@
     </div>
     <div class="container body-content" style="font-family: VT323;font-size: 150%">
         @RenderBody()
+        <div class="modal fade" id="deleteModal" role="dialog">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <p>
+                            Are you sure ??
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger" data-dismiss="modal" id="deleteModalConfirm">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <hr />
         <footer>
             <p>&copy; @DateTime.Now.Year - Jonas Ausevicius, IFF-4/2</p>
@@ -90,7 +105,7 @@
     })();
 
     $(document).ready(function() {
-        jQuery('input[type=submit').click(function() {
+        jQuery('input[type=submit]').click(function() {
             var form = $(this).closest('form');
 
             if (!form.valid()) {
@@ -100,6 +115,17 @@
                         form.delay(200).removeClass('ahashakeheartache');
                     });
             }
+        });
+    });
+
+    $(document).on('click', ".delete-btn", function (e) {
+        var form = $(this).parents("form");
+        // Prevent submit
+        e.preventDefault();
+        // Show dialog
+        $("#deleteModal").modal('show');
+        $("#deleteModalConfirm").click(function() {
+            form.submit();
         });
     });
 </script>

@@ -6,8 +6,12 @@
 
 <h2 style="text-align: center">@Model.UserName</h2>
 
-@Html.ActionLink("BACK", "Admin", "Home", new { @class = "btn btn-primary" })
-@Html.ActionLink("DELETE", "DeleteUser", "Home", new { userId = Model.Id }, new { @class = "btn btn-danger" })
+@Html.ActionLink("BACK", "Admin", "Home", new {@class = "btn btn-primary"})
+@using (Html.BeginForm("DeleteUser", "Home", FormMethod.Post, new { style = "display: inline" }))
+{
+    <input type="hidden" name="userId" value="@Model.Id" />
+    <input type="submit" name="delete" value="DELETE" class="btn btn-danger delete-btn" style="color: white">
+}
 
 <h3 style="text-align: center">SEND MONEY</h3>
 

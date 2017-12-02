@@ -3,6 +3,7 @@
 <table class="w3-table w3-bordered w3-striped w3-border test w3-hoverable">
     <tbody>
     <tr class="w3-green">
+        <th></th>
         <th>Username</th>
         <th>Email</th>
         <th>Balance</th>
@@ -14,12 +15,15 @@
     @foreach (var user in Model)
     {
         <tr>
+            <td style="margin: 0; padding: 0">
+                <img src="@Url.Content("~/Content/user.png")" style="width: 50px; max-width: 100%;"/>
+            </td>
             <td>@user.UserName</td>
             <td>@user.Email</td>
             <td>$@user.Balance</td>
             <td>$@user.RealBalance</td>
             <td>@user.RegisterDatetime</td>
-            <td>@Html.ActionLink("EDIT", "UserEdit", "Home", new { userId = user.Id }, new { @class = "btn btn-primary" })</td>
+            <td>@Html.ActionLink("EDIT", "UserEdit", "Home", new {userId = user.Id}, new {@class = "btn btn-primary"})</td>
         </tr>
     }
 </table>
