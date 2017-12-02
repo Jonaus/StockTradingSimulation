@@ -39,6 +39,35 @@ namespace StockTradingSimulationWebClient.Core
             return Get<User>(token, $"api/Users/{userId}");
         }
 
+        public static Stock GetStock(string token, int stockId)
+        {
+            return Get<Stock>(token, $"api/Stocks/{stockId}");
+        }
+
+        public static void AddStock(string token, Stock stock)
+        {
+            Post<string>(token, "api/Stocks", new
+            {
+                Id = 0,
+                Fullname = stock.Fullname,
+                Ticker=  stock.Ticker
+            });
+        }
+
+        public static void EditStock(string token, Stock stock)
+        {
+            Put<string>(token, $"api/Stocks/{stock.Id}", new
+            {
+                fullname = stock.Fullname,
+                ticker = stock.Ticker
+            });
+        }
+
+        public static void DeleteStock(string token, int stockId)
+        {
+            Delete<string>(token, $"api/Stocks/{stockId}");
+        }
+
         public static void DeleteUser(string token, string userId)
         {
             Delete<string>(token, $"api/Users/{userId}");
@@ -129,7 +158,11 @@ namespace StockTradingSimulationWebClient.Core
         {
             var request = new RestRequest(endpoint, method);
             request.AddParameter("Authorization", $"Bearer {token}", ParameterType.HttpHeader);
-            if (o != null) request.AddObject(o);
+            if (o != null)
+            {
+                request.AddHeader("Content-type", "application/json");
+                request.AddJsonBody(o);
+            }
 
             IRestResponse response = Client.Execute(request);
             try

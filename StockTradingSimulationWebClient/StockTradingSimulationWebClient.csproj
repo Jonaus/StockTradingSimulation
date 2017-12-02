@@ -1020,7 +1020,7 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\History.cshtml" />
-    <Content Include="Views\Home\Users.cshtml" />
+    <Content Include="Views\Home\Admin.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Scripts\version.json" />
     <Content Include="Views\Login\Index.cshtml" />
@@ -1032,6 +1032,7 @@
     <Content Include="Views\Home\PartialViews\UsersPartial.cshtml" />
     <Content Include="Views\Home\UserEdit.cshtml" />
     <Content Include="Views\Home\PartialViews\MoneySendPartial.cshtml" />
+    <Content Include="Views\Home\PartialViews\StocksPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

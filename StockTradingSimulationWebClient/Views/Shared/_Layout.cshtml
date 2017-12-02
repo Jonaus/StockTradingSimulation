@@ -33,7 +33,7 @@
                         <li>@Html.ActionLink("History", "History", "Home")</li>
                         @if (User.IsInRole("Administrator"))
                         {
-                            <li>@Html.ActionLink("Users", "Users", "Home")</li>
+                            <li>@Html.ActionLink("Admin", "Admin", "Home")</li>
                         }
                         <li style="float: right">
                             <a href="@Url.Action("Index", "Logout")">

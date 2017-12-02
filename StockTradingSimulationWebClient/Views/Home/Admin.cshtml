@@ -1,0 +1,70 @@
+﻿@{
+    ViewBag.Title = "Admin Page";
+}
+
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+<h2 style="text-align: center">USERS</h2>
+
+<div id="divLoadingUsers"></div>
+<div id="UsersPartial"></div>
+
+<h2 style="text-align: center">STOCKS</h2>
+
+<div id="divLoadingStocks"></div>
+<div id="StocksPartial"></div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/Scripts/jquery.unobtrusive-ajax.js")
+
+    <script>
+        function onBegin(id) {
+            $(id).html('<image src="../Content/ajax-loader.gif" alt="Loading, please wait" />');
+        }
+
+        function onComplete(id) {
+            $(id).html("");
+        }
+
+        function updateUsers() {
+            onBegin("#divLoadingUsers");
+            $("#UsersPartial").load(
+                '@Url.Action("UsersPartial", "Home")',
+                () => onComplete("#divLoadingUsers")
+            );
+        }
+
+        function updateStocks() {
+            onBegin("#divLoadingStocks");
+            $("#StocksPartial").load(
+                '@Url.Action("StocksPartial", "Home")',
+                () => onComplete("#divLoadingStocks")
+            );
+        }
+
+        function updateSuccess(data) {
+            if (data.success) {
+                alert('Success.');
+                updateStocks();
+            } else {
+                alert('Failure.');
+            }
+        }
+
+        function deleteSuccess(data) {
+            if (data.success) {
+                alert('Successfully deleted stock.');
+                updateStocks();
+            } else {
+                alert('Failure.');
+            }
+        }
+
+        $(document).ready(function() {
+            onBegin();
+            updateUsers();
+            updateStocks();
+        });
+    </script>
+}

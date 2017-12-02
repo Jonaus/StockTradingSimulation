@@ -1,0 +1,68 @@
+﻿@using StockTradingSimulationWebClient.Models
+@model IEnumerable<StockTradingSimulationWebClient.Models.Stock>
+
+@{
+    var Stocks = new List<Stock>(Model);
+    var newStock = new Stock();
+    newStock.Id = 0;
+    Stocks.Add(newStock);
+
+}
+
+<table class="w3-table w3-bordered w3-striped w3-border test w3-hoverable">
+    @for (var i = 0; i < Stocks.Count; i++)
+    {
+        var stock = Stocks.ElementAt(i);
+        var isLast = i >= Stocks.Count - 1;
+        <tr>
+            <td>
+                @using (Ajax.BeginForm("EditStock", "Home", null, new AjaxOptions
+                {
+                    OnSuccess = "updateSuccess(data)"
+                }))
+                {
+                    <table>
+                        <tr>
+                            <td class="col-md-2">
+                                @Html.EditorFor(model => stock.Ticker, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                            <td class="col-md-6">
+                                @Html.EditorFor(model => stock.Fullname, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                            <td class="col-md-2">
+                                @Html.HiddenFor(model => stock.Id)
+                                @if (isLast)
+                                {
+                                    <input type="submit" value="ADD" class="btn btn-success" style="color: white" />
+                                }
+                                else
+                                {
+                                    <input type="submit" value="UPDATE" class="btn btn-primary" style="color: white" />
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                }
+            </td>
+            @if (!isLast)
+            {
+                <td class="col-md-2">
+                    @using (Ajax.BeginForm("DeleteStock", "Home", null, new AjaxOptions
+                    {
+                        OnSuccess = "deleteSuccess(data)"
+                    }))
+                    {
+                        <table>
+                            <tr>
+                                <td>
+                                    <input type="hidden" name="id" value="@stock.Id" />
+                                    <button type="submit" value="DELETE" class="btn btn-danger" style="color: white">DELETE</button>
+                                </td>
+                            </tr>
+                        </table>
+                    }
+                </td>
+            }
+        </tr>
+    }
+</table>

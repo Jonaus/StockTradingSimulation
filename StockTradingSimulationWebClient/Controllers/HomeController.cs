@@ -22,7 +22,7 @@ namespace StockTradingSimulationWebClient.Controllers
         }
 
         [Authorize(Roles = "Administrator")]
-        public ActionResult Users()
+        public ActionResult Admin()
         {
             return View();
         }
@@ -86,6 +86,15 @@ namespace StockTradingSimulationWebClient.Controllers
             users.ForEach(u => u.CalcBalance(token));
 
             return PartialView("PartialViews/UsersPartial", users);
+        }
+
+        [Authorize(Roles = "Administrator")]
+        public ActionResult StocksPartial()
+        {
+            var token = ((ClaimsPrincipal)HttpContext.User).FindFirst("AccessToken").Value;
+            var stocks = ApiClient.GetStocks(token);
+
+            return PartialView("PartialViews/StocksPartial", stocks);
         }
 
         [Authorize]
@@ -152,7 +161,31 @@ namespace StockTradingSimulationWebClient.Controllers
             var token = ((ClaimsPrincipal)HttpContext.User).FindFirst("AccessToken").Value;
             ApiClient.DeleteUser(token, userId);
 
-            return RedirectToAction("Users");
+            return RedirectToAction("Admin");
+        }
+
+        [Authorize(Roles = "Administrator")]
+        public ActionResult EditStock(Stock stock)
+        {
+            if (!ModelState.IsValid)
+                return Json(new { success = false });
+
+            var token = ((ClaimsPrincipal)HttpContext.User).FindFirst("AccessToken").Value;
+            if (ApiClient.GetStock(token, stock.Id) != null)
+                ApiClient.EditStock(token, stock);
+            else
+                ApiClient.AddStock(token, stock);
+
+            return Json(new { success = true });
+        }
+
+        [Authorize(Roles = "Administrator")]
+        public ActionResult DeleteStock(int id)
+        {
+            var token = ((ClaimsPrincipal)HttpContext.User).FindFirst("AccessToken").Value;
+            ApiClient.DeleteStock(token, id);
+
+            return Json(new { success = true });
         }
     }
 }
