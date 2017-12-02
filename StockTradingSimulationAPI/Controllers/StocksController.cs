@@ -148,6 +148,12 @@ namespace StockTradingSimulationAPI.Controllers
             if (stock == null)
                 return NotFound();
 
+            var positions = Db.Positions.Where(p => p.StockId == stock.Id);
+            Db.Positions.RemoveRange(positions);
+
+            var watchedStocks = Db.WatchedStocks.Where(s => s.StockId == stock.Id);
+            Db.WatchedStocks.RemoveRange(watchedStocks);
+
             Db.Stocks.Remove(stock);
             await Db.SaveChangesAsync();
 

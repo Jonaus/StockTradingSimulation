@@ -1,0 +1,36 @@
+﻿@model StockTradingSimulationWebClient.Models.User
+
+@{
+    ViewBag.Title = "User";
+}
+
+<h2 style="text-align: center">@Model.UserName</h2>
+
+@Html.ActionLink("BACK", "Users", "Home", new { @class = "btn btn-primary" })
+@Html.ActionLink("DELETE", "DeleteUser", "Home", new { userId = Model.Id }, new { @class = "btn btn-danger" })
+
+<h3 style="text-align: center">SEND MONEY</h3>
+
+@using (Ajax.BeginForm("SendMoney", "Home", null, new AjaxOptions
+{
+    UpdateTargetId = "MoneySendPartial",
+    InsertionMode = InsertionMode.Replace,
+    OnSuccess = "sendSuccess(data)"
+}))
+{
+    <div id="MoneySendPartial">
+        @{ Html.RenderAction("MoneySendPartial", "Home", new { userId = Model.Id }); }
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/Scripts/jquery.unobtrusive-ajax.js")
+
+    <script>
+        function sendSuccess(data) {
+            if (data.indexOf("field-validation-error") > -1) return;
+            alert('Successfully sent money.');
+        }
+    </script>
+}

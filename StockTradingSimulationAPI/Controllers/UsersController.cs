@@ -204,6 +204,15 @@ namespace StockTradingSimulationAPI.Controllers
             if (self == null)
                 return Unauthorized();
 
+            var transactions = Db.MoneyHistory.Where(t => t.UserId == self.Id);
+            Db.MoneyHistory.RemoveRange(transactions);
+
+            var watchedStocks = Db.WatchedStocks.Where(t => t.UserId == self.Id);
+            Db.WatchedStocks.RemoveRange(watchedStocks);
+
+            var positions = Db.Positions.Where(t => t.UserId == self.Id);
+            Db.Positions.RemoveRange(positions);
+
             Db.Users.Remove(self);
             await Db.SaveChangesAsync();
 
@@ -221,6 +230,15 @@ namespace StockTradingSimulationAPI.Controllers
             User user = await Db.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (user == null || (!IsAdmin() && user.Id != self.Id))
                 return NotFound();
+
+            var transactions = Db.MoneyHistory.Where(t => t.UserId == user.Id);
+            Db.MoneyHistory.RemoveRange(transactions);
+
+            var watchedStocks = Db.WatchedStocks.Where(s => s.UserId == user.Id);
+            Db.WatchedStocks.RemoveRange(watchedStocks);
+
+            var positions = Db.Positions.Where(p => p.UserId == user.Id);
+            Db.Positions.RemoveRange(positions);
 
             Db.Users.Remove(user);
             await Db.SaveChangesAsync();

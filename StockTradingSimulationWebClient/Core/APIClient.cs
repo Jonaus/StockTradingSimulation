@@ -2,6 +2,7 @@
 using StockTradingSimulationWebClient.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace StockTradingSimulationWebClient.Core
@@ -23,9 +24,24 @@ namespace StockTradingSimulationWebClient.Core
             return Get<List<Stock>>(token, "api/stocks");
         }
 
+        public static IEnumerable<User> GetUsers(string token)
+        {
+            return Get<List<User>>(token, "api/users");
+        }
+
         public static IEnumerable<MoneyHistory> GetHistory(string token)
         {
             return Get<List<MoneyHistory>>(token, "api/users/self/history");
+        }
+
+        public static User GetUser(string token, string userId)
+        {
+            return Get<User>(token, $"api/Users/{userId}");
+        }
+
+        public static void DeleteUser(string token, string userId)
+        {
+            Delete<string>(token, $"api/Users/{userId}");
         }
 
         public static User GetSelf(string token)
@@ -43,6 +59,16 @@ namespace StockTradingSimulationWebClient.Core
             return Get<float>(token, "api/Users/self/realbalance");
         }
 
+        public static float GetBalance(string token, string id)
+        {
+            return Get<float>(token, $"api/Users/{id}/balance");
+        }
+
+        public static float GetRealBalance(string token, string id)
+        {
+            return Get<float>(token, $"api/Users/{id}/realbalance");
+        }
+
         public static IEnumerable<Position> GetSelfPositions(string token)
         {
             return Get<List<Position>>(token, "api/positions");
@@ -51,6 +77,11 @@ namespace StockTradingSimulationWebClient.Core
         public static float GetStockPrice(string token, int id)
         {
             return Get<float>(token, $"api/stocks/{id}/price");
+        }
+
+        public static void ClosePosition(string token, int id)
+        {
+            Post<string>(token, $"api/positions/{id}/close");
         }
 
         public static void OpenPosition(string token, NewPositionViewModel model)
@@ -64,9 +95,12 @@ namespace StockTradingSimulationWebClient.Core
             });
         }
 
-        public static void ClosePosition(string token, int id)
+        public static void SendMoney(string token, TransactionViewModel model)
         {
-            Post<string>(token, $"api/positions/{id}/close");
+            Post<string>(token, $"api/users/{model.UserId}/balance", new
+            {
+                Amount = model.Amount
+            });
         }
 
         #region Private

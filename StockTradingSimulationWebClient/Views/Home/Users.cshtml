@@ -1,17 +1,37 @@
 ﻿@{
-    ViewBag.Title = "Contact";
+    ViewBag.Title = "Users";
 }
-<h2>@ViewBag.Title.</h2>
-<h3>@ViewBag.Message</h3>
 
-<address>
-    One Microsoft Way<br />
-    Redmond, WA 98052-6399<br />
-    <abbr title="Phone">P:</abbr>
-    425.555.0100
-</address>
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
-<address>
-    <strong>Support:</strong>   <a href="mailto:Support@example.com">Support@example.com</a><br />
-    <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
-</address>
+<h2 style="text-align: center">USERS</h2>
+
+<div id="divLoading"></div>
+<div id="UsersPartial"></div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/Scripts/jquery.unobtrusive-ajax.js")
+
+    <script>
+        function onBegin() {
+            $("#divLoading").html('<image src="../Content/ajax-loader.gif" alt="Loading, please wait" />');
+        }
+
+        function onComplete() {
+            $("#divLoading").html("");
+        }
+
+        function updateUsers() {
+            $("#UsersPartial").load(
+                '@Url.Action("UsersPartial", "Home")',
+                () => onComplete()
+            );
+        }
+
+        $(document).ready(function () {
+            onBegin();
+            updateUsers();
+        });
+    </script>
+}

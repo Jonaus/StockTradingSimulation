@@ -8,6 +8,7 @@ namespace StockTradingSimulationWebClient.Models
     public class PositionViewModel
     {
         public int Id { get; set; }
+        public string UserId { get; set; }
         public Stock Stock { get; set; }
         public Transaction TransactionType { get; set; }
         public int Quantity { get; set; }
@@ -26,6 +27,7 @@ namespace StockTradingSimulationWebClient.Models
 
             var equity = Helpers.CalculatePositionEquity(position, cPrice);
             Id = position.Id;
+            UserId = position.UserId;
             Stock = position.Stock;
             TransactionType = position.TransactionType;
             Quantity = position.Quantity;
