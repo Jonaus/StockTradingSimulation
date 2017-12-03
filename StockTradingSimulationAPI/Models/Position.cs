@@ -10,7 +10,7 @@ namespace StockTradingSimulationAPI.Models
     {
         [Key]
         [Required]
-        public int Id { get; protected set; }
+        public int Id { get; set; }
         
         public string UserId { get; set; }
         [ForeignKey("UserId")]

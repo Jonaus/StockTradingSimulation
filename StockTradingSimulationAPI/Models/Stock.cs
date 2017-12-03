@@ -8,7 +8,7 @@ namespace StockTradingSimulationAPI.Models
     {
         [Key]
         [Required]
-        public int Id { get; protected set; }
+        public int Id { get; set; }
 
         [Required]
         public string Fullname { get; set; }
