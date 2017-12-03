@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockTradingSimulationAPI",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockTradingSimulationWebClient", "StockTradingSimulationWebClient\StockTradingSimulationWebClient.csproj", "{2E8CD364-F76F-40AB-BD0F-80973229B711}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockTradingSimulationAPI.Tests", "StockTradingSimulationAPI.Tests\StockTradingSimulationAPI.Tests.csproj", "{12BA5B6E-F4EB-4749-8E4B-52D9C0BC0DA3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{2E8CD364-F76F-40AB-BD0F-80973229B711}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E8CD364-F76F-40AB-BD0F-80973229B711}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E8CD364-F76F-40AB-BD0F-80973229B711}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12BA5B6E-F4EB-4749-8E4B-52D9C0BC0DA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12BA5B6E-F4EB-4749-8E4B-52D9C0BC0DA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12BA5B6E-F4EB-4749-8E4B-52D9C0BC0DA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12BA5B6E-F4EB-4749-8E4B-52D9C0BC0DA3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
